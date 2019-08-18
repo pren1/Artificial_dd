@@ -7,7 +7,7 @@ Please keep this repo **private**, and please notice that this is **not** an ope
 A software that can send context-based fake danmaku
 Please write more things here if any of you want to describe this project...
 
-### [![Generic badge](https://img.shields.io/badge/2-Model structure-<COLOR>.svg)](https://shields.io/)
+### [![Generic badge](https://img.shields.io/badge/2-Model_structure-<COLOR>.svg)](https://shields.io/)
 This is a sequence-to-sequence model with attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
 
 <p>
@@ -24,7 +24,7 @@ bash ./download_sources.sh
 python3 model_process.py
 ```
 
-### [![Generic badge](https://img.shields.io/badge/4-Output example-<COLOR>.svg)](https://shields.io/)
+### [![Generic badge](https://img.shields.io/badge/4-Output_example-<COLOR>.svg)](https://shields.io/)
 
 With inputs:
 ```
