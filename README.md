@@ -1,5 +1,6 @@
 # Artificial_dd
-Please keep this repo **private**, and this is not an open-source software currently.
+### 0. Notification
+Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
 ### 1. Introduction
 A software that can send context-based fake danmaku
