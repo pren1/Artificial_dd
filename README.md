@@ -1,20 +1,20 @@
 # Artificial_dd
 
-### [![Generic badge](https://img.shields.io/badge/0-Notification-<COLOR>.svg)](https://shields.io/)
+### 0. Notification
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
-### [![Generic badge](https://img.shields.io/badge/1-Introduction-<COLOR>.svg)](https://shields.io/)
+### 1. Introduction
 A software that can send context-based fake danmaku
 Please write more things here if any of you want to describe this project...
 
-### [![Generic badge](https://img.shields.io/badge/2-Model_structure-<COLOR>.svg)](https://shields.io/)
+### 2. Model structure
 This is a sequence-to-sequence model with attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
 
 <p>
     <img src="model_picture/model.png"/>
 </p>
 
-### [![Generic badge](https://img.shields.io/badge/3-Utilization-<COLOR>.svg)](https://shields.io/)
+### 3. Utilization
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
 bash ./download_sources.sh
@@ -24,7 +24,7 @@ bash ./download_sources.sh
 python3 model_process.py
 ```
 
-### [![Generic badge](https://img.shields.io/badge/4-Output_example-<COLOR>.svg)](https://shields.io/)
+### 4. Output example
 
 With inputs:
 ```
