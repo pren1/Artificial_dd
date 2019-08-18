@@ -71,5 +71,6 @@ if __name__ == '__main__':
 	def processjson():
 		data = request.get_json()
 		return jsonify({'result': data['name']})
+		# return data
 
-	app.run(debug=True)
+	app.run(host='10.0.0.207')
