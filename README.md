@@ -1,9 +1,10 @@
 # Artificial_dd
 Please keep this repo **private**, this is not an open source software currently.
+
 A software that can send context-based fake danmaku
 
 ### 1. Introduction
-Whoever want to describe this project please write something here...
+Please write something here if any of you want to describe this project...
 
 ### 2. Model structure
 This is a seqence-to-sequence model with attention mechanism utilized. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here are the model structure:
