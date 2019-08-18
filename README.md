@@ -1,9 +1,7 @@
 # Artificial_dd
 
 [![Generic badge](https://img.shields.io/badge/Tensorflow-keras-<COLOR>.svg)](https://shields.io/) 
-[![Generic badge](https://img.shields.io/badge/bidirectional-lstm-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/attention-machinism-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/encoder-decoder-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/github-dd_center-<COLOR>.svg)](https://shields.io/)
 
 ### 0. Notification
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
