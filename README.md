@@ -25,7 +25,6 @@ python3 model_process.py
 ### 4. Output example
 With inputs:
 ```
-Load in texts...
 ？？？
 要让老师小心一点
 太可爱了
