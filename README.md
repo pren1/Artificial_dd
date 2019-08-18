@@ -1,4 +1,6 @@
 # Artificial_dd
+[![Generic badge](https://img.shields.io/badge/<SUBJECT>-<STATUS>-<COLOR>.svg)](https://shields.io/)
+
 ### 0. Notification
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
