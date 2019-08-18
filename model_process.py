@@ -29,30 +29,47 @@ Licensed under the Apache License, Version 2.0 (the "License");
 ## Predict vtuber danmaku with Cloud TPUs and Keras
 #### Modified from "Predict Shakespeare with Cloud TPUs and Keras"
 'Author github ID: pren1, coco401, simon3000, Afanyiyu'
-
 from process_prepare import process_prepare
 from model_builder import model_structure_loader
 from generating_text import text_generator
+import pdb
+
+class model_process(object):
+	def __init__(self):
+		'load in model at this part'
+		'the character should occur this much time if they wanna to be taken into account'
+		context_vector_length = 100
+		context_seq_length = 130
+		BATCH_SIZE = 500
+		PREDICT_LEN = 50
+		model_folder = 'tmp'
+
+		'prepare for the whole process'
+		preparer = process_prepare(target_path_folder='content')
+		model_builder = model_structure_loader(characters=preparer.characters,
+		                                       embedding_matrix=preparer.embedding_matrix,
+		                                       context_vector_length=context_vector_length)
+		_, encoder_model, _ = model_builder.lstm_model(seq_len=1, batch_size=BATCH_SIZE, stateful=True)
+		encoder_model.load_weights('./{}/encoder.h5'.format(model_folder))
+		decoder_model = model_builder.get_stand_alone_decoder(seq_len=1, batch_size=BATCH_SIZE, stateful=True)
+		decoder_model.load_weights('./{}/decoder.h5'.format(model_folder))
+		generator = text_generator(encoder_model, decoder_model, BATCH_SIZE, PREDICT_LEN, preparer)
+		# We seed the model with our initial string, copied BATCH_SIZE times
+		new_txt = preparer.load_in_texts()
+		print("Load in texts...")
+		seed = preparer.transform(preparer.clip_text(100, new_txt))
+		print("generating text...")
+		generator.predict_interface(seed)
 
 if __name__ == '__main__':
-	'the character should occur this much time if they wanna to be taken into account'
-	context_vector_length = 100
-	context_seq_length = 130
-	BATCH_SIZE = 500
-	PREDICT_LEN = 50
-	model_folder = 'tmp'
+	from flask import Flask
+	from flask import jsonify
+	from flask import request
+	app = Flask(__name__)
+	'do not know why...'
+	@app.route('/', methods=['POST'])
+	def processjson():
+		data = request.get_json()
+		return jsonify({'result': data['name']})
 
-	'prepare for the whole process'
-	preparer = process_prepare(target_path_folder = 'content')
-	model_builder = model_structure_loader(characters = preparer.characters, embedding_matrix = preparer.embedding_matrix, context_vector_length = context_vector_length)
-	_, encoder_model, _ = model_builder.lstm_model(seq_len=1, batch_size=BATCH_SIZE, stateful=True)
-	encoder_model.load_weights('./{}/encoder.h5'.format(model_folder))
-	decoder_model = model_builder.get_stand_alone_decoder(seq_len=1, batch_size=BATCH_SIZE, stateful=True)
-	decoder_model.load_weights('./{}/decoder.h5'.format(model_folder))
-	generator = text_generator(encoder_model, decoder_model, BATCH_SIZE, PREDICT_LEN, preparer)
-	# We seed the model with our initial string, copied BATCH_SIZE times
-	new_txt = preparer.load_in_texts()
-	print("Load in texts...")
-	seed = preparer.transform(preparer.clip_text(100, new_txt))
-	print("generating text...")
-	generator.predict_interface(seed)
+	app.run(debug=True)
