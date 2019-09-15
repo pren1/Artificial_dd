@@ -19,11 +19,11 @@ import pdb
 
 
 class model_process(object):
-	def __init__(self):
+	def __init__(self, BATCH_SIZE):
 		'load in model at this part'
 		'the character should occur this much time if they wanna to be taken into account'
 		self.context_vector_length = 100
-		self.BATCH_SIZE = 500
+		self.BATCH_SIZE = BATCH_SIZE
 		self.PREDICT_LEN = 15
 		self.model_folder = 'tmp'
 		self.data_list = []
@@ -45,6 +45,7 @@ class model_process(object):
 	def feed_in_data(self, data_seq):
 		'read in the data'
 		assert len(data_seq) > 0, "Empty data, something wrong here~"
+		generated = []
 		if self.is_data_enough():
 			'Print input data'
 			print("read in data:")
@@ -53,13 +54,14 @@ class model_process(object):
 			'Run prediction automatically'
 			obtained_input = sum(self.data_list, [])
 			assert len(obtained_input) > self.context_vector_length, "Logic error"
-			self.generator.predict_interface(self.preparer.transform(obtained_input[-100:]))
 			print("generating text...")
+			generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:])).tolist()
 			'Empty the data_list'
 			self.data_list = []
 		'Cut the string and add tokens'
 		data_seq = self.preparer.cut_target_seq(data_seq)
 		self.data_list.append(data_seq)
+		return generated
 
 	def is_data_enough(self):
 		current_length = len(sum(self.data_list, []))
@@ -70,7 +72,7 @@ class model_process(object):
 
 if __name__ == '__main__':
 	'Initialize'
-	mp = model_process()
+	mp = model_process(BATCH_SIZE = 500)
 	'Create a generator, load in the trained model'
 	mp.prepare_for_generator()
 	'We assume we have the following inputs'
@@ -79,4 +81,4 @@ if __name__ == '__main__':
 	'Use a loop to iterate the data'
 	for single_data in data:
 		'Everytime there is a new message available, feed in the data'
-		mp.feed_in_data(single_data)
+		returned_result = mp.feed_in_data(single_data)

@@ -18,8 +18,9 @@ class text_generator(object):
 	def predict_interface(self, seed):
 		start_time = time.time()
 		self.predict(seed)
-		self.generate_text()
+		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - start_time))
+		return generated
 
 	def predict(self, seed):
 		'given the input seed, process it'
@@ -83,3 +84,4 @@ class text_generator(object):
 		for generated in fin_res:
 			print(generated)
 			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
+		return fin_res
