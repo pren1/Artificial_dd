@@ -69,3 +69,49 @@ awsl
 你不要过来啊
 阿伟死了
 ```
+
+### 5. Quick start
+
+First, create an instance and load the model. At this part, please notice the tunable parameter 'BATCH_SIZE'. The program will be more time-consuming if you increase this parameter, but you will get better results, so there is a trade-off here.
+```
+from model_process import model_process
+'Initialize'
+mp = model_process(BATCH_SIZE = 500)
+'Create a generator, load in the trained model'
+mp.prepare_for_generator()
+```
+
+Second, get the input data
+```
+'We assume we have the following inputs'
+data = input_data().return_example_input_list()
+input_data().show_input_data()
+```
+At this step, you could see the following outputs. That's what the program expects:
+```
+read in data:
+>> 今晚我不睡了！
+>> 刺激刺激
+>> washoi
+>> 马自立唱歌……
+>> 爷不睡了
+>> 夏哥播，我就陪夏哥熬
+>> 夏哥深夜档
+>> ｋｋｓｋ
+>> 玩光明上下的先踢了
+>> dd们换牌子
+>> 半夜唱歌？
+>> こんばんわっしゅい
+>> washoi
+>> washoi
+>> (｀・ω・´)牙白
+```
+
+Then, whenever the new data is available, just run the feed_in_data function. Here we use a for loop to simulate this process:
+```
+'Use a loop to iterate the data'
+	for single_data in data:
+		'Everytime there is a new message available, feed in the data'
+		returned_result = mp.feed_in_data(single_data)
+```
+Whenever there is enough data, the model will output the fake danmakus to the 'returned_result', which is a list. Otherwise, the list will be empty.
