@@ -6,6 +6,7 @@ import json
 from tqdm import tqdm
 import copy
 import random
+import jieba
 
 class process_prepare(object):
 	def __init__(self, target_path_folder):
@@ -25,10 +26,28 @@ class process_prepare(object):
 	def transform(self, txt):
 		return np.asarray([self.char_to_n[c] for c in txt], dtype=np.int32)
 
+	def create_custom_dict(self):
+		with open('custom_dict.txt', 'w') as f:
+			for item in self.characters[1:]:
+				f.write("%s\n" % item)
+
+	def cut_target_seq(self, target_data):
+		# jieba.load_userdict("./custom_dict.txt")
+		word_list = jieba.lcut(target_data)
+		'after we cut this part, apply a filter'
+		res = []
+		for single_word in word_list:
+			if single_word in self.characters:
+				res.append(single_word)
+		res.insert(0, 'eos')
+		res.append('\n')
+		return res
+
 	def load_in_texts(self):
 		'get some real text inputs'
 		with open(self.preprocessed_TXT, encoding='UTF-8') as json_file:
 			data = json.load(json_file, encoding='UTF-8')
+			pdb.set_trace()
 			'process the data'
 			txt = []
 			for single_meg in data:

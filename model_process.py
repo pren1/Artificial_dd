@@ -7,70 +7,76 @@ Original file is located at
     https://colab.research.google.com/drive/1TSXNQ3IXjvLE2daqFVmdZvHDYn7Xzgkd
 
 ##### Copyright 2018 The TensorFlow Hub Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
 """
-
-# Copyright 2018 The TensorFlow Hub Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
 ## Predict vtuber danmaku with Cloud TPUs and Keras
 #### Modified from "Predict Shakespeare with Cloud TPUs and Keras"
 'Author github ID: pren1, coco401, simon3000, Afanyiyu'
 from process_prepare import process_prepare
 from model_builder import model_structure_loader
 from generating_text import text_generator
+from input_data import input_data
 import pdb
+
 
 class model_process(object):
 	def __init__(self):
 		'load in model at this part'
 		'the character should occur this much time if they wanna to be taken into account'
-		context_vector_length = 100
-		context_seq_length = 130
-		BATCH_SIZE = 500
-		PREDICT_LEN = 50
-		model_folder = 'tmp'
+		self.context_vector_length = 100
+		self.BATCH_SIZE = 500
+		self.PREDICT_LEN = 15
+		self.model_folder = 'tmp'
+		self.data_list = []
 
+	def prepare_for_generator(self):
 		'prepare for the whole process'
-		preparer = process_prepare(target_path_folder='content')
-		model_builder = model_structure_loader(characters=preparer.characters,
-		                                       embedding_matrix=preparer.embedding_matrix,
-		                                       context_vector_length=context_vector_length)
-		_, encoder_model, _ = model_builder.lstm_model(seq_len=1, batch_size=BATCH_SIZE, stateful=True)
-		encoder_model.load_weights('./{}/encoder.h5'.format(model_folder))
-		decoder_model = model_builder.get_stand_alone_decoder(seq_len=1, batch_size=BATCH_SIZE, stateful=True)
-		decoder_model.load_weights('./{}/decoder.h5'.format(model_folder))
-		generator = text_generator(encoder_model, decoder_model, BATCH_SIZE, PREDICT_LEN, preparer)
-		# We seed the model with our initial string, copied BATCH_SIZE times
-		new_txt = preparer.load_in_texts()
-		print("Load in texts...")
-		seed = preparer.transform(preparer.clip_text(100, new_txt))
-		print("generating text...")
-		generator.predict_interface(seed)
+		self.preparer = process_prepare(target_path_folder='content')
+		'Save custom dict to txt file: custom_dict.txt'
+		self.preparer.create_custom_dict()
+		model_builder = model_structure_loader(characters=self.preparer.characters,
+		                                       embedding_matrix=self.preparer.embedding_matrix,
+		                                       context_vector_length=self.context_vector_length)
+		_, encoder_model, _ = model_builder.lstm_model(seq_len=1, batch_size=self.BATCH_SIZE, stateful=True)
+		encoder_model.load_weights('./{}/encoder.h5'.format(self.model_folder))
+		decoder_model = model_builder.get_stand_alone_decoder(seq_len=1, batch_size=self.BATCH_SIZE, stateful=True)
+		decoder_model.load_weights('./{}/decoder.h5'.format(self.model_folder))
+		self.generator = text_generator(encoder_model, decoder_model, self.BATCH_SIZE, self.PREDICT_LEN, self.preparer)
+
+	def feed_in_data(self, data_seq):
+		'read in the data'
+		assert len(data_seq) > 0, "Empty data, something wrong here~"
+		if self.is_data_enough():
+			'Print input data'
+			print("read in data:")
+			for data in self.data_list:
+				print(f">>{data}")
+			'Run prediction automatically'
+			obtained_input = sum(self.data_list, [])
+			assert len(obtained_input) > self.context_vector_length, "Logic error"
+			self.generator.predict_interface(self.preparer.transform(obtained_input[-100:]))
+			print("generating text...")
+			'Empty the data_list'
+			self.data_list = []
+		'Cut the string and add tokens'
+		data_seq = self.preparer.cut_target_seq(data_seq)
+		self.data_list.append(data_seq)
+
+	def is_data_enough(self):
+		current_length = len(sum(self.data_list, []))
+		if current_length > self.context_vector_length:
+			return True
+		else:
+			return False
 
 if __name__ == '__main__':
-	from flask import Flask
-	from flask import jsonify
-	from flask import request
-	app = Flask(__name__)
-	'do not know why...'
-	@app.route('/', methods=['POST'])
-	def processjson():
-		data = request.get_json()
-		return jsonify({'result': data['name']})
-		# return data
-
-	app.run(host='10.0.0.207')
+	'Initialize'
+	mp = model_process()
+	'Create a generator, load in the trained model'
+	mp.prepare_for_generator()
+	'We assume we have the following inputs'
+	data = input_data().return_example_input_list()
+	input_data().show_input_data()
+	'Use a loop to iterate the data'
+	for single_data in data:
+		'Everytime there is a new message available, feed in the data'
+		mp.feed_in_data(single_data)
