@@ -3,17 +3,17 @@
 [![Generic badge](https://img.shields.io/badge/Tensorflow-keras-<COLOR>.svg)](https://shields.io/) 
 [![Generic badge](https://img.shields.io/badge/github-dd_center-<COLOR>.svg)](https://shields.io/)
 
-### 0. Notification
+### ⚠️ Notification
 
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
-### 1. Introduction
+### 📃 Introduction
 
 A software that can send context-based fake danmaku. 
 
 Please write more things here if any of you want to describe this project...
 
-### 2. Model structure
+### 🧠 Model structure
 
 This is a sequence-to-sequence model with an attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
 
@@ -21,7 +21,7 @@ This is a sequence-to-sequence model with an attention mechanism. The encoder is
     <img src="model_picture/model.png"/>
 </p>
 
-### 3. Utilization
+### 🚧 Utilization
 
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
@@ -32,7 +32,7 @@ bash ./download_sources.sh
 python3 model_process.py
 ```
 
-### 4. Output example
+### 🎉 Output example
 
 With inputs:
 ```
@@ -75,7 +75,7 @@ awsl
 阿伟死了
 ```
 
-### 5. Quick start
+### ⚡️ Quick start
 
 First, create an instance and load the model. 
 
