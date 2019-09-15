@@ -79,7 +79,7 @@ awsl
 
 First, create an instance and load the model. 
 
-The program will be more time-consuming if you increase the parameter 'BATCH_SIZE', but you will get better results. So, there is a trade-off here. For instance, if you set 'BATCH_SIZE' to 500, it took 6.7 seconds to generate 20 fake danmakus on my computer. We could expect it to be much faster in a GPU.
+The program will be more time-consuming if you increase the parameter 'BATCH_SIZE', but you will get better results. So, there is a trade-off here. For instance, under current configuration, it took 6.7 seconds to generate 20 fake danmakus on my computer. We could expect it to be much faster in a GPU.
 
 ```python
 from model_process import model_process
