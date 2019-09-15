@@ -77,7 +77,9 @@ awsl
 
 ### 5. Quick start
 
-First, create an instance and load the model. At this part, please notice the tunable parameter 'BATCH_SIZE'. The program will be more time-consuming if you increase this parameter, but you will get better results, so there is a trade-off here. For instance, if you set BATCH_SIZE to 500, it should take 6.7 seconds to generate 20 fake danmakus on my computer. We could expect it to be much faster in a GPU.
+First, create an instance and load the model. 
+
+The program will be more time-consuming if you increase the parameter 'BATCH_SIZE', but you will get better results. So, there is a trade-off here. For instance, if you set 'BATCH_SIZE' to 500, it took 6.7 seconds to generate 20 fake danmakus on my computer. We could expect it to be much faster in a GPU.
 
 ```python
 from model_process import model_process
@@ -87,13 +89,13 @@ mp = model_process(BATCH_SIZE = 500)
 mp.prepare_for_generator()
 ```
 
-Second, get the input data
+Second, get the input data.
 ```python
 'We assume we have the following inputs'
 data = input_data().return_example_input_list()
 input_data().show_input_data()
 ```
-At this step, you could see the following outputs. That's what the program expects as inputs:
+At this step, you should see the following outputs in the console. That's what the program expects as inputs:
 ```
 read in data:
 >> 今晚我不睡了！
