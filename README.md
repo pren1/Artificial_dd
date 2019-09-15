@@ -4,20 +4,25 @@
 [![Generic badge](https://img.shields.io/badge/github-dd_center-<COLOR>.svg)](https://shields.io/)
 
 ### 0. Notification
+
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
 ### 1. Introduction
-A software that can send context-based fake danmaku
+
+A software that can send context-based fake danmaku. 
+
 Please write more things here if any of you want to describe this project...
 
 ### 2. Model structure
-This is a sequence-to-sequence model with attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
+
+This is a sequence-to-sequence model with an attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
 
 <p>
     <img src="model_picture/model.png"/>
 </p>
 
 ### 3. Utilization
+
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
 bash ./download_sources.sh
@@ -72,7 +77,8 @@ awsl
 
 ### 5. Quick start
 
-First, create an instance and load the model. At this part, please notice the tunable parameter 'BATCH_SIZE'. The program will be more time-consuming if you increase this parameter, but you will get better results, so there is a trade-off here.
+First, create an instance and load the model. At this part, please notice the tunable parameter 'BATCH_SIZE'. The program will be more time-consuming if you increase this parameter, but you will get better results, so there is a trade-off here. For instance, if you set BATCH_SIZE to 500, it should take 6.7 seconds to generate 20 fake danmakus on my computer. We could expect it to be much faster in a GPU.
+
 ```python
 from model_process import model_process
 'Initialize'
@@ -87,7 +93,7 @@ Second, get the input data
 data = input_data().return_example_input_list()
 input_data().show_input_data()
 ```
-At this step, you could see the following outputs. That's what the program expects:
+At this step, you could see the following outputs. That's what the program expects as inputs:
 ```
 read in data:
 >> 今晚我不睡了！
@@ -107,11 +113,11 @@ read in data:
 >> (｀・ω・´)牙白
 ```
 
-Then, whenever the new data is available, just run the feed_in_data function. Here we use a for loop to simulate this process:
+Then, whenever the new data is available, feed it into the feed_in_data function. Here we use a for loop to simulate this process:
 ```python
 'Use a loop to iterate the data'
 for single_data in data:
-    'Everytime there is a new message available, feed in the data'
+    'Every time there is a new message available, feed in the data'
     returned_result = mp.feed_in_data(single_data)
 ```
 Whenever there is enough data, the model will output the fake danmakus to the 'returned_result', which is a list. Otherwise, the list will be empty.
