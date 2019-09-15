@@ -73,7 +73,7 @@ awsl
 ### 5. Quick start
 
 First, create an instance and load the model. At this part, please notice the tunable parameter 'BATCH_SIZE'. The program will be more time-consuming if you increase this parameter, but you will get better results, so there is a trade-off here.
-```pycon
+```python
 from model_process import model_process
 'Initialize'
 mp = model_process(BATCH_SIZE = 500)
@@ -82,7 +82,7 @@ mp.prepare_for_generator()
 ```
 
 Second, get the input data
-```pycon
+```python
 'We assume we have the following inputs'
 data = input_data().return_example_input_list()
 input_data().show_input_data()
@@ -108,10 +108,10 @@ read in data:
 ```
 
 Then, whenever the new data is available, just run the feed_in_data function. Here we use a for loop to simulate this process:
-```pycon
+```python
 'Use a loop to iterate the data'
 for single_data in data:
     'Everytime there is a new message available, feed in the data'
-	returned_result = mp.feed_in_data(single_data)
+    returned_result = mp.feed_in_data(single_data)
 ```
 Whenever there is enough data, the model will output the fake danmakus to the 'returned_result', which is a list. Otherwise, the list will be empty.
