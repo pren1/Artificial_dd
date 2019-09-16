@@ -66,13 +66,13 @@ class model_structure_loader(object):
 
 		Model = tf.keras.Model(inputs=[encoder_input, decoder_inputs], outputs=[predicted_char])
 		Model.summary()
-		tf.keras.utils.plot_model(Model, show_shapes=True, to_file='./model_picture/model.png')
+		# tf.keras.utils.plot_model(Model, show_shapes=True, to_file='./model_picture/model.png')
 
 		'For reference, also prepared some tricks'
 		encoder_model = tf.keras.Model(encoder_input,
 		                               [encoder_states_1[0], encoder_states_1[1], encoder_states_2[0], encoder_states_2[1],
 		                                enc_lstm2])
-		tf.keras.utils.plot_model(encoder_model, show_shapes=True, to_file='./model_picture/encoder_model.png')
+		# tf.keras.utils.plot_model(encoder_model, show_shapes=True, to_file='./model_picture/encoder_model.png')
 
 		decoder_state_input_h = tf.keras.Input(shape=(self.EMBEDDING_DIM,))
 		decoder_state_input_c = tf.keras.Input(shape=(self.EMBEDDING_DIM,))
@@ -97,7 +97,7 @@ class model_structure_loader(object):
 		decoder_outputs = predicted_char_layer(dense_layer_output_1)
 		decoder_model = tf.keras.Model([decoder_inputs] + decoder_states_inputs + [encoder_output_in],
 		                               [decoder_outputs] + decoder_states)
-		tf.keras.utils.plot_model(decoder_model, show_shapes=True, to_file='./model_picture/decoder_model.png')
+		# tf.keras.utils.plot_model(decoder_model, show_shapes=True, to_file='./model_picture/decoder_model.png')
 
 		return Model, encoder_model, decoder_model
 
@@ -138,5 +138,5 @@ class model_structure_loader(object):
 		decoder_outputs = predicted_char_layer(dense_layer_output_1)
 		decoder_model = tf.keras.Model([decoder_inputs] + decoder_states_inputs + [encoder_output_in],
 		                               [decoder_outputs] + decoder_states)
-		tf.keras.utils.plot_model(decoder_model, show_shapes=True, to_file='./model_picture/decoder_model.png')
+		# tf.keras.utils.plot_model(decoder_model, show_shapes=True, to_file='./model_picture/decoder_model.png')
 		return decoder_model
