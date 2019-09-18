@@ -24,6 +24,15 @@ This is a sequence-to-sequence model with an attention mechanism. The encoder is
     <img src="model_picture/model.png"/>
 </p>
 
+### ⚡️ Request Packages
+gdown
+keras
+numpy
+scipy
+tqdm
+jieba
+
+
 ### 🚧 Utilization
 
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
