@@ -16,46 +16,57 @@ class text_generator(object):
 		self.generate_message_number = 20
 
 	def predict_interface(self, seed):
-		start_time = time.time()
+		self.start_time = time.time()
 		# self.predict(seed)
 		self.predict_beam_search(seed)
-		print("---generation process cost %s seconds ---" % (time.time() - start_time))
 		generated = self.generate_text()
-		print("---generation process cost %s seconds ---" % (time.time() - start_time))
+		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
+		pdb.set_trace()
 		return generated
 
 	def predict_beam_search(self, seed, top_k=5, temperature=1.0):
 
+		# self.encoder_model.reset_states()
+		# self.decoder_model.reset_states()
 		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
 		state_and_output = self.encoder_model.predict(seed)
 		states_value = state_and_output[:4]
 		encoder_output = state_and_output[-1]
 		self.predictions = [np.array([[7010]] * self.BATCH_SIZE, dtype=np.int32)]
 		self.predictions_prob = []
+		'If the stop batch value is True, skip that part'
+		self.stop_batch_list = [False] * self.BATCH_SIZE
 		for i in range(self.PREDICT_LEN):
 			'First, run the prediction on all the batches'
 			last_word = self.predictions[-1]
 			next_probits, h, c, h1, c1 = self.decoder_model.predict([last_word] + states_value + [encoder_output])
+			# print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 			'(500, 7011)'
 			next_probits = next_probits[:, 0, :]
 			'For each batch...'
 			current_whole_batch_prediction = []
 			current_whole_batch_prob = []
 			for batch_index in range(len(next_probits)):
-				if top_k == 1:
-					last_token = next_probits[batch_index].argmax(axis=-1)
+				if self.stop_batch_list[batch_index] == True:
+					'Simply stop calculating the useless probability'
+					last_token = 7010
 				else:
-					'j is the index of each word'
-					probs = [(prob, j) for j, prob in enumerate(next_probits[batch_index])]
-					probs.sort(reverse=True)
-					probs = probs[:top_k]
-					indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
-					'apply softmax here...'
-					probs = np.array(probs) / temperature
-					probs = probs - np.max(probs)
-					probs = np.exp(probs)
-					probs = probs / np.sum(probs)
-					last_token = np.random.choice(indices, p=probs)
+					if top_k == 1:
+						last_token = next_probits[batch_index].argmax(axis=-1)
+					else:
+						'j is the index of each word'
+						probs = [(prob, j) for j, prob in enumerate(next_probits[batch_index])]
+						probs.sort(reverse=True)
+						probs = probs[:top_k]
+						indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
+						'apply softmax here...'
+						probs = np.array(probs) / temperature
+						probs = probs - np.max(probs)
+						probs = np.exp(probs)
+						probs = probs / np.sum(probs)
+						last_token = np.random.choice(indices, p=probs)
+					if last_token in [0, 7010]:
+						self.stop_batch_list[batch_index] = True
 				current_whole_batch_prediction.append(last_token)
 				current_whole_batch_prob.append(next_probits[batch_index][last_token])
 			self.predictions.append(np.asarray(current_whole_batch_prediction))

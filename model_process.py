@@ -82,3 +82,5 @@ if __name__ == '__main__':
 	for single_data in data:
 		'Everytime there is a new message available, feed in the data'
 		returned_result = mp.feed_in_data(single_data)
+		if len(returned_result) > 0:
+			pdb.set_trace()
