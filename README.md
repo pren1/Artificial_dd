@@ -25,14 +25,14 @@ This is a sequence-to-sequence model with an attention mechanism. The encoder is
     <img src="model_picture/model.png"/>
 </p>
 
-### ⚡️ Request Packages
-gdown
-keras
-numpy
-scipy
-tqdm
-jieba
+### 🌲 Request Packages
 
+[![Generic badge](https://img.shields.io/badge/gdown-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/keras-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/numpy-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/scipy-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/tqdm-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/jieba-<COLOR>.svg)](https://shields.io/)
 
 ### 🚧 Utilization
 
