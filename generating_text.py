@@ -3,6 +3,7 @@ import pdb
 import numpy as np
 import time
 from scipy.special import softmax
+from heapq import nlargest
 
 class text_generator(object):
 	def __init__(self, encoder_model, decoder_model, BATCH_SIZE, PREDICT_LEN, preparer):
@@ -21,7 +22,6 @@ class text_generator(object):
 		self.predict_beam_search(seed)
 		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
-		pdb.set_trace()
 		return generated
 
 	def predict_beam_search(self, seed, top_k=5, temperature=1.0):
@@ -56,14 +56,14 @@ class text_generator(object):
 					else:
 						'j is the index of each word'
 						probs = [(prob, j) for j, prob in enumerate(next_probits[batch_index])]
-						probs.sort(reverse=True)
-						probs = probs[:top_k]
+						probs = nlargest(top_k, probs)
 						indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
 						'apply softmax here...'
-						probs = np.array(probs) / temperature
-						probs = probs - np.max(probs)
-						probs = np.exp(probs)
-						probs = probs / np.sum(probs)
+						# probs = np.array(probs) / temperature
+						# probs = probs - np.max(probs)
+						# probs = np.exp(probs)
+						# probs = probs / np.sum(probs)
+						probs = softmax(probs)
 						last_token = np.random.choice(indices, p=probs)
 					if last_token in [0, 7010]:
 						self.stop_batch_list[batch_index] = True
