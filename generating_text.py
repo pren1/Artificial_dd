@@ -17,10 +17,50 @@ class text_generator(object):
 
 	def predict_interface(self, seed):
 		start_time = time.time()
-		self.predict(seed)
+		# self.predict(seed)
+		self.predict_beam_search(seed)
+		print("---generation process cost %s seconds ---" % (time.time() - start_time))
 		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - start_time))
 		return generated
+
+	def predict_beam_search(self, seed, top_k=5, temperature=1.0):
+
+		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
+		state_and_output = self.encoder_model.predict(seed)
+		states_value = state_and_output[:4]
+		encoder_output = state_and_output[-1]
+		self.predictions = [np.array([[7010]] * self.BATCH_SIZE, dtype=np.int32)]
+		self.predictions_prob = []
+		for i in range(self.PREDICT_LEN):
+			'First, run the prediction on all the batches'
+			last_word = self.predictions[-1]
+			next_probits, h, c, h1, c1 = self.decoder_model.predict([last_word] + states_value + [encoder_output])
+			'(500, 7011)'
+			next_probits = next_probits[:, 0, :]
+			'For each batch...'
+			current_whole_batch_prediction = []
+			current_whole_batch_prob = []
+			for batch_index in range(len(next_probits)):
+				if top_k == 1:
+					last_token = next_probits[batch_index].argmax(axis=-1)
+				else:
+					'j is the index of each word'
+					probs = [(prob, j) for j, prob in enumerate(next_probits[batch_index])]
+					probs.sort(reverse=True)
+					probs = probs[:top_k]
+					indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
+					'apply softmax here...'
+					probs = np.array(probs) / temperature
+					probs = probs - np.max(probs)
+					probs = np.exp(probs)
+					probs = probs / np.sum(probs)
+					last_token = np.random.choice(indices, p=probs)
+				current_whole_batch_prediction.append(last_token)
+				current_whole_batch_prob.append(next_probits[batch_index][last_token])
+			self.predictions.append(np.asarray(current_whole_batch_prediction))
+			self.predictions_prob.append(np.asarray(current_whole_batch_prob))
+			states_value = [h, c, h1, c1]  #######NOTICE THE ADDITIONAL HIDDEN STATES
 
 	def predict(self, seed):
 		'given the input seed, process it'
