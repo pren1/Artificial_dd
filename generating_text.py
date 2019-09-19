@@ -13,7 +13,7 @@ class text_generator(object):
 		self.PREDICT_LEN = PREDICT_LEN
 		self.preparer = preparer
 		'will only consider the messages that has more log prob than -2.0'
-		self.prob_thres = -2.0
+		self.prob_thres = -2.5
 		self.generate_message_number = 20
 
 	def predict_interface(self, seed):
@@ -129,6 +129,7 @@ class text_generator(object):
 				generated_whole_list.append([this_batch_prob, generated])
 		res = sorted(generated_whole_list, key=lambda tup: tup[0], reverse=True)
 		res = np.asarray(res)
+		# pdb.set_trace()
 		prob_part = softmax([float(x) for x in res[:, 0]])
 		danmaku_list = res[:, 1]
 		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)

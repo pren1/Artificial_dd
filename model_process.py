@@ -17,7 +17,6 @@ from generating_text import text_generator
 from input_data import input_data
 import pdb
 
-
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
 		'load in model at this part'
@@ -72,7 +71,7 @@ class model_process(object):
 
 if __name__ == '__main__':
 	'Initialize'
-	mp = model_process(BATCH_SIZE = 500)
+	mp = model_process(BATCH_SIZE = 100)
 	'Create a generator, load in the trained model'
 	mp.prepare_for_generator()
 	'We assume we have the following inputs'
