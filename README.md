@@ -2,6 +2,7 @@
 
 [![Generic badge](https://img.shields.io/badge/Tensorflow-keras-<COLOR>.svg)](https://shields.io/) 
 [![Generic badge](https://img.shields.io/badge/github-dd_center-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Beam-search-<COLOR>.svg)](https://shields.io/)
 <p>
     <img src="model_picture/dd_center.png"/>
 </p>
