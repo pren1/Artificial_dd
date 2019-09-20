@@ -9,7 +9,7 @@ class input_data(object):
 
 	def read_target_txt(self):
 		# Read in target txt into a string list
-		with open('./mea_demo.txt', "r") as txtfile:
+		with open('./mea_demo.txt', "r",encoding='UTF-8') as txtfile:
 			data = txtfile.readlines()
 		# Remove '\n'
 		self.txt_list = [string.rstrip('\n') for string in data]

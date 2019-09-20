@@ -27,7 +27,7 @@ class process_prepare(object):
 		return np.asarray([self.char_to_n[c] for c in txt], dtype=np.int32)
 
 	def create_custom_dict(self):
-		with open('custom_dict.txt', 'w') as f:
+		with open('custom_dict.txt', 'w',encoding='UTF-8') as f:
 			for item in self.characters[1:]:
 				f.write("%s\n" % item)
 
