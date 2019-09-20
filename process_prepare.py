@@ -79,4 +79,3 @@ class process_prepare(object):
 		clipped_txt_for_test = new_txt[start_index:start_index + txt_length]
 		self.delete_EOS(copy.deepcopy(clipped_txt_for_test))
 		return clipped_txt_for_test
-

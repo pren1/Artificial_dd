@@ -141,7 +141,7 @@ class text_generator(object):
 		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
 		for generated in fin_res:
 			print(generated)
-			self.print_target_message(generated)
+			# self.print_target_message(generated)
 			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
 		return fin_res
 
