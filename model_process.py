@@ -65,8 +65,8 @@ class model_process(object):
 			obtained_input = sum(self.data_list, [])
 			assert len(obtained_input) > self.context_vector_length, "Logic error"
 			print("create a new thread to generate text...")
-			# _thread.start_new_thread(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
-			generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:]),self.graph, self.sess).tolist()
+			_thread.start_new_thread(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
+			# generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:])).tolist()
 			'Empty the data_list'
 			self.data_list = []
 		'Cut the string and add tokens'
