@@ -11,6 +11,14 @@
 
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
+### Update
+
+Now run:
+
+python3 open_listen_server.py
+
+To catch danmaku and do evaluation in a new thread!
+
 ### 📃 Introduction
 
 A software that can send context-based fake danmaku. 
