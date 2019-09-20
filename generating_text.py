@@ -4,6 +4,8 @@ import numpy as np
 import time
 from scipy.special import softmax
 from heapq import nlargest
+import tensorflow as tf
+import os
 
 class text_generator(object):
 	def __init__(self, encoder_model, decoder_model, BATCH_SIZE, PREDICT_LEN, preparer):
@@ -16,20 +18,22 @@ class text_generator(object):
 		self.prob_thres = -2.5
 		self.generate_message_number = 20
 
-	def predict_interface(self, seed):
+	def predict_interface(self, seed, graph, sess):
 		self.start_time = time.time()
 		# self.predict(seed)
-		self.predict_beam_search(seed)
+		self.predict_beam_search(seed, graph, sess)
 		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 		return generated
 
-	def predict_beam_search(self, seed, top_k=5, temperature=1.0):
+	def predict_beam_search(self, seed, graph, sess, top_k=5, temperature=1.0):
 
 		# self.encoder_model.reset_states()
 		# self.decoder_model.reset_states()
 		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
-		state_and_output = self.encoder_model.predict(seed)
+		with graph.as_default():
+			with sess.as_default():
+				state_and_output = self.encoder_model.predict(seed)
 		states_value = state_and_output[:4]
 		encoder_output = state_and_output[-1]
 		self.predictions = [np.array([[7010]] * self.BATCH_SIZE, dtype=np.int32)]
@@ -39,7 +43,9 @@ class text_generator(object):
 		for i in range(self.PREDICT_LEN):
 			'First, run the prediction on all the batches'
 			last_word = self.predictions[-1]
-			next_probits, h, c, h1, c1 = self.decoder_model.predict([last_word] + states_value + [encoder_output])
+			with graph.as_default():
+				with sess.as_default():
+					next_probits, h, c, h1, c1 = self.decoder_model.predict([last_word] + states_value + [encoder_output])
 			# print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 			'(500, 7011)'
 			next_probits = next_probits[:, 0, :]
@@ -135,5 +141,9 @@ class text_generator(object):
 		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
 		for generated in fin_res:
 			print(generated)
+			self.print_target_message(generated)
 			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
 		return fin_res
+
+	def print_target_message(self, meg):
+		os.system(f"node ./bilibili-live-danmaku-api/stdio.js 0b54e1f2%2C1571543190%2C1fbcb691 5a8198928f3697f11882019cec04e38c 686555 {meg}")

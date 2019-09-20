@@ -16,6 +16,8 @@ from model_builder import model_structure_loader
 from generating_text import text_generator
 from input_data import input_data
 import pdb
+import _thread
+import tensorflow as tf
 
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
@@ -32,29 +34,39 @@ class model_process(object):
 		self.preparer = process_prepare(target_path_folder='content')
 		'Save custom dict to txt file: custom_dict.txt'
 		self.preparer.create_custom_dict()
-		model_builder = model_structure_loader(characters=self.preparer.characters,
-		                                       embedding_matrix=self.preparer.embedding_matrix,
-		                                       context_vector_length=self.context_vector_length)
-		_, encoder_model, _ = model_builder.lstm_model(seq_len=1, batch_size=self.BATCH_SIZE, stateful=True)
-		encoder_model.load_weights('./{}/encoder.h5'.format(self.model_folder))
-		decoder_model = model_builder.get_stand_alone_decoder(seq_len=1, batch_size=self.BATCH_SIZE, stateful=True)
-		decoder_model.load_weights('./{}/decoder.h5'.format(self.model_folder))
+		'Work around for keras model multi-threading'
+		self.sess = tf.Session()
+		self.graph = tf.get_default_graph()
+		with self.graph.as_default():
+			with self.sess.as_default():
+				model_builder = model_structure_loader(characters=self.preparer.characters,
+				                                       embedding_matrix=self.preparer.embedding_matrix,
+				                                       context_vector_length=self.context_vector_length)
+				_, encoder_model, _ = model_builder.lstm_model(seq_len=1, batch_size=self.BATCH_SIZE, stateful=True)
+				encoder_model.load_weights('./{}/encoder.h5'.format(self.model_folder))
+				decoder_model = model_builder.get_stand_alone_decoder(seq_len=1, batch_size=self.BATCH_SIZE, stateful=True)
+				decoder_model.load_weights('./{}/decoder.h5'.format(self.model_folder))
+		# self.graph = tf.get_default_graph()
+		tf.keras.backend.set_session(self.sess)
+
 		self.generator = text_generator(encoder_model, decoder_model, self.BATCH_SIZE, self.PREDICT_LEN, self.preparer)
 
 	def feed_in_data(self, data_seq):
 		'read in the data'
 		assert len(data_seq) > 0, "Empty data, something wrong here~"
+		print(f">> {data_seq}")
 		generated = []
 		if self.is_data_enough():
 			'Print input data'
-			print("read in data:")
-			for data in self.data_list:
-				print(f">>{data}")
+			# print("read in data:")
+			# for data in self.data_list:
+			# 	print(f">>{data}")
 			'Run prediction automatically'
 			obtained_input = sum(self.data_list, [])
 			assert len(obtained_input) > self.context_vector_length, "Logic error"
-			print("generating text...")
-			generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:])).tolist()
+			print("create a new thread to generate text...")
+			_thread.start_new_thread(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
+			# generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:])).tolist()
 			'Empty the data_list'
 			self.data_list = []
 		'Cut the string and add tokens'
