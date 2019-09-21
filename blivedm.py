@@ -300,7 +300,7 @@ class BLiveClient:
 
         '添加模型初始化'
         'Initialize'
-        self.mp = model_process(BATCH_SIZE=100)
+        self.mp = model_process(BATCH_SIZE=500)
         'Create a generator, load in the trained model'
         self.mp.prepare_for_generator()
         print("model get prepared here")

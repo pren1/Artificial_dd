@@ -17,7 +17,7 @@ class MyBLiveClient(blivedm.BLiveClient):
     #     print(f'当前人气值：{popularity}')
 
     async def _on_receive_danmaku(self, danmaku: blivedm.DanmakuMessage):
-        if danmaku.uname == 'CRkOKp2i5':
+        if danmaku.uname == '一代鬃狮':
             print(f'{danmaku.uname}：{danmaku.msg}')
             # loop = asyncio.get_event_loop()
             self.mp.feed_in_data(danmaku.msg)
@@ -37,7 +37,7 @@ async def main():
 
     # 139是黑桐谷歌的直播间
     # 如果SSL验证失败就把ssl设为False
-    client = MyBLiveClient(686555, ssl=True)
+    client = MyBLiveClient(711307, ssl=True)
     future = client.start()
     try:
         # 5秒后停止，测试用

@@ -33,22 +33,22 @@
 #         socketIO.emit( 'python-message', now.strftime( "%-d %b %Y %H:%M:%S.%f" ) )
 #         socketIO.wait( seconds=1 )
 
-import pdb
-
-def not_removed(single):
-    char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    use_this_one = False
-    single = single.lower()
-    for character in single:
-        if (character not in char_list) and (not character.isdigit()):
-            use_this_one = True
-    if single in ['kksk', 'awsl', 'rua']:
-        use_this_one = True
-    return use_this_one
-
-not_removed('哈哈')
-pdb.set_trace()
-pdb.set_trace()
+# import pdb
+#
+# def not_removed(single):
+#     char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+#     use_this_one = False
+#     single = single.lower()
+#     for character in single:
+#         if (character not in char_list) and (not character.isdigit()):
+#             use_this_one = True
+#     if single in ['kksk', 'awsl', 'rua']:
+#         use_this_one = True
+#     return use_this_one
+#
+# not_removed('哈哈')
+# pdb.set_trace()
+# pdb.set_trace()
 
 
 # import requests
@@ -59,3 +59,8 @@ pdb.set_trace()
 # data = {'SESSDATA': '1502a8ee%2C1571610493%2C60b13f91', 'csrf':'5524c8c121497774904472148b122504', 'roomid':'686555', 'msg': '>??<'}
 # headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 # r = requests.post(url, data=json.dumps(data), headers=headers)
+
+import sys
+import pexpect
+p = pexpect.spawn('node stdio.js')
+p.sendline('1502a8ee%2C1571610493%2C60b13f91 5524c8c121497774904472148b122504 711307 123321')
