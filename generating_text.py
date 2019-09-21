@@ -6,6 +6,7 @@ from scipy.special import softmax
 from heapq import nlargest
 import tensorflow as tf
 import os
+import _thread
 
 class text_generator(object):
 	def __init__(self, encoder_model, decoder_model, BATCH_SIZE, PREDICT_LEN, preparer):
@@ -139,11 +140,32 @@ class text_generator(object):
 		prob_part = softmax([float(x) for x in res[:, 0]])
 		danmaku_list = res[:, 1]
 		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
+		fin_res = self.danmaku_filter(fin_res)
 		for generated in fin_res:
 			print(generated)
 			self.print_target_message(generated)
+			# _thread.start_new_thread(self.print_target_message, (generated,))
 			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
 		return fin_res
 
+	def danmaku_filter(self, fin_res):
+		new_res = []
+		for single in fin_res:
+			if self.not_removed(single):
+				new_res.append(single)
+		return new_res
+
+	def not_removed(self, single):
+		char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+		             'u', 'v', 'w', 'x', 'y', 'z']
+		use_this_one = False
+		single = single.lower()
+		for character in single:
+			if (character not in char_list) and (not character.isdigit()):
+				use_this_one = True
+		if single in ['kksk', 'awsl', 'rua']:
+			use_this_one = True
+		return use_this_one
+
 	def print_target_message(self, meg):
-		os.system(f"node ./bilibili-live-danmaku-api/stdio.js 0b54e1f2%2C1571543190%2C1fbcb691 5a8198928f3697f11882019cec04e38c 686555 {meg}")
+		os.system(f"node ./bilibili-live-danmaku-api/stdio.js e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 686555 {meg}")
