@@ -158,10 +158,11 @@ class text_generator(object):
 	def not_removed(self, single):
 		char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
 		             'u', 'v', 'w', 'x', 'y', 'z']
+		number_list = ['1', '4', '5', '6', '7', '9']
 		use_this_one = False
 		single = single.lower()
 		for character in single:
-			if (character not in char_list) and (not character.isdigit()):
+			if (character not in char_list) and (character not in number_list):
 				use_this_one = True
 		if single in ['kksk', 'awsl', 'rua']:
 			use_this_one = True
