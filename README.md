@@ -148,7 +148,7 @@ The program will be more time-consuming if you increase the parameter 'BATCH_SIZ
 ```python
 from model_process import model_process
 'Initialize'
-mp = model_process(BATCH_SIZE = 500)
+mp = model_process(BATCH_SIZE = 100)
 'Create a generator, load in the trained model'
 mp.prepare_for_generator()
 ```
