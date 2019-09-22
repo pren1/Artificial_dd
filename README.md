@@ -29,7 +29,7 @@ Please write more things here if any of you want to describe this project...
 
 ### 🎉 Demo
 
-We got a [demo](https://pan.baidu.com/s/18Pkr_VAEnXuME-NMG7HMdQ) here! Yeah!
+We got a [demo vedio](https://pan.baidu.com/s/18Pkr_VAEnXuME-NMG7HMdQ) here! Yeah!
 
 ### ☁️ Model structure
 
