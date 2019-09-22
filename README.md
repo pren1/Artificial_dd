@@ -45,7 +45,7 @@ bash ./download_sources.sh
 ```
 python3 model_process.py
 ```
-3. After that, send the message to http://10.0.0.207:5000/ in the following format:
+3. After that, post a message to http://10.0.0.207:5000/ in the following format:
 ```json
 {"message":"kuso和夏哥撞车了, 2333333333, 哈哈哈哈哈哈, 哈哈哈哈哈哈哈哈哈哈哈"}
 ```
