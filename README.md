@@ -33,7 +33,7 @@ We got a [demo video](https://pan.baidu.com/s/18Pkr_VAEnXuME-NMG7HMdQ) here! Yea
 
 ### ☁️ Model structure
 
-This is a sequence-to-sequence model with an attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
+This is a sequence-to-sequence model with the attention mechanism. The encoder is used to compress the information in input messages, and the decoder is responsible for generating new texts based on the inputs. Here is the model structure:
 
 <p>
     <img src="model_picture/model.png"/>
