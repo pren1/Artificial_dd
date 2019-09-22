@@ -7,7 +7,6 @@ from heapq import nlargest
 import tensorflow as tf
 import os
 import _thread
-import pexpect
 import sched, time
 
 class text_generator(object):
@@ -20,7 +19,7 @@ class text_generator(object):
 		'will only consider the messages that has more log prob than -2.0'
 		self.prob_thres = -2.5
 		self.generate_message_number = 40
-		self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
+		# self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
 
 	def predict_interface(self, seed, graph, sess):
 		self.start_time = time.time()
@@ -148,7 +147,7 @@ class text_generator(object):
 		danmaku_list = res[:, 1]
 		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
 		fin_res = self.danmaku_filter(fin_res)
-		time_range = list(range(len(fin_res)))
+		# time_range = list(range(len(fin_res)))
 		# s = sched.scheduler(time.time, time.sleep)
 		# for (time_stamp, single_meg) in zip(time_range, fin_res):
 		# 	print(f"time_stamp: {time_stamp}, meg: {single_meg}")
@@ -180,18 +179,18 @@ class text_generator(object):
 			use_this_one = True
 		return use_this_one
 
-	def print_target_message(self, meg):
-		# self.push_service.sendline(f'e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 711307 {meg}')
-		random_int = np.random.randint(3, size=1)
-		if random_int == 0:
-			_thread.start_new_thread(os.system, (f"node ./bilibili-live-danmaku-api/stdio.js e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 711307 {meg}",))
-			# os.system(f"node ./bilibili-live-danmaku-api/stdio.js e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 711307 {meg}")
-		elif random_int == 1:
-			_thread.start_new_thread(os.system, (f"node ./bilibili-live-danmaku-api/stdio.js 4a97f2ef%2C1571683732%2C8d5a1791 4bde0a8146c3be858c827350f05dbe37 711307 {meg}",))
-			# os.system(f"node ./bilibili-live-danmaku-api/stdio.js 4a97f2ef%2C1571683732%2C8d5a1791 4bde0a8146c3be858c827350f05dbe37 711307 {meg}")
-		elif random_int == 2:
-			_thread.start_new_thread(os.system, (
-			f"node ./bilibili-live-danmaku-api/stdio.js fec803e5%2C1571684349%2C00527891 1b32662e3c6eba51fd90b8d281ffd06a 711307 {meg}",))
-		# elif random_int == 3:
-		# 	_thread.start_new_thread(os.system, (
-		# 	f"node ./bilibili-live-danmaku-api/stdio.js 4a97f2ef%2C1571683732%2C8d5a1791 4bde0a8146c3be858c827350f05dbe37 711307 {meg}",))
+	# def print_target_message(self, meg):
+	# 	# self.push_service.sendline(f'e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 711307 {meg}')
+	# 	random_int = np.random.randint(3, size=1)
+	# 	if random_int == 0:
+	# 		_thread.start_new_thread(os.system, (f"node ./bilibili-live-danmaku-api/stdio.js e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 711307 {meg}",))
+	# 		# os.system(f"node ./bilibili-live-danmaku-api/stdio.js e5217f3b%2C1571553645%2Cfecaa191 b367826c1b0c5a56b1448e5f3e99c83e 711307 {meg}")
+	# 	elif random_int == 1:
+	# 		_thread.start_new_thread(os.system, (f"node ./bilibili-live-danmaku-api/stdio.js 4a97f2ef%2C1571683732%2C8d5a1791 4bde0a8146c3be858c827350f05dbe37 711307 {meg}",))
+	# 		# os.system(f"node ./bilibili-live-danmaku-api/stdio.js 4a97f2ef%2C1571683732%2C8d5a1791 4bde0a8146c3be858c827350f05dbe37 711307 {meg}")
+	# 	elif random_int == 2:
+	# 		_thread.start_new_thread(os.system, (
+	# 		f"node ./bilibili-live-danmaku-api/stdio.js fec803e5%2C1571684349%2C00527891 1b32662e3c6eba51fd90b8d281ffd06a 711307 {meg}",))
+	# 	# elif random_int == 3:
+	# 	# 	_thread.start_new_thread(os.system, (
+	# 	# 	f"node ./bilibili-live-danmaku-api/stdio.js 4a97f2ef%2C1571683732%2C8d5a1791 4bde0a8146c3be858c827350f05dbe37 711307 {meg}",))
