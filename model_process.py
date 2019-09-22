@@ -18,6 +18,7 @@ from input_data import input_data
 import pdb
 import _thread
 import tensorflow as tf
+from multiprocessing.pool import ThreadPool
 
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
@@ -65,10 +66,14 @@ class model_process(object):
 			obtained_input = sum(self.data_list, [])
 			assert len(obtained_input) > self.context_vector_length, "Logic error"
 			print("create a new thread to generate text...")
-			_thread.start_new_thread(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
+			pool = ThreadPool(processes=1)
+			async_result = pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
+			# _thread.start_new_thread(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
 			# generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:])).tolist()
 			'Empty the data_list'
 			self.data_list = []
+			return_val = async_result.get()
+			return return_val
 		'Cut the string and add tokens'
 		data_seq = self.preparer.cut_target_seq(data_seq)
 		self.data_list.append(data_seq)
@@ -81,17 +86,39 @@ class model_process(object):
 		else:
 			return False
 
+# if __name__ == '__main__':
+# 	'Initialize'
+# 	mp = model_process(BATCH_SIZE = 100)
+# 	'Create a generator, load in the trained model'
+# 	mp.prepare_for_generator()
+# 	'We assume we have the following inputs'
+# 	data = input_data().return_example_input_list()
+# 	input_data().show_input_data()
+# 	'Use a loop to iterate the data'
+# 	for single_data in data:
+# 		'Everytime there is a new message available, feed in the data'
+# 		returned_result = mp.feed_in_data(single_data)
+# 		if len(returned_result) > 0:
+# 			pdb.set_trace()
+
 if __name__ == '__main__':
+	from flask import Flask
+	from flask import jsonify
+	from flask import request
+	from flask import copy_current_request_context
 	'Initialize'
 	mp = model_process(BATCH_SIZE = 100)
 	'Create a generator, load in the trained model'
 	mp.prepare_for_generator()
-	'We assume we have the following inputs'
-	data = input_data().return_example_input_list()
-	input_data().show_input_data()
-	'Use a loop to iterate the data'
-	for single_data in data:
-		'Everytime there is a new message available, feed in the data'
-		returned_result = mp.feed_in_data(single_data)
-		if len(returned_result) > 0:
-			pdb.set_trace()
+	app = Flask(__name__)
+	'do not know why...'
+	@app.route('/', methods=['POST'])
+	def processjson():
+		data = request.get_json()
+		generated_message = mp.feed_in_data(data['message'])
+		print(f"read in data message: {data['message']}")
+		if len(generated_message) == 0:
+			return jsonify({'result': "not enough input messages"})
+		else:
+			return jsonify({'result': generated_message})
+	app.run(host='10.0.0.207')

@@ -154,8 +154,8 @@ class text_generator(object):
 		# 	print(f"time_stamp: {time_stamp}, meg: {single_meg}")
 		# 	s.enter(float(time_stamp), 1, self.print_target_message, (single_meg,))
 		for generated in fin_res:
-			print(generated)
-			self.print_target_message(generated)
+			print(f"Generated message: {generated}")
+			# self.print_target_message(generated)
 			# _thread.start_new_thread(self.print_target_message, (generated,))
 			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
 		return fin_res
