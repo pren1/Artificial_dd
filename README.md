@@ -11,13 +11,15 @@
 
 Please keep this repo **private**, and please notice that this is **not** an open-source software currently. 
 
-### Update
+### 🌲 Request Packages
 
-Now run:
-
-python3 open_listen_server.py
-
-To catch danmaku and do evaluation in a new thread!
+[![Generic badge](https://img.shields.io/badge/gdown-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/keras-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/numpy-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/scipy-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/tqdm-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/jieba-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/flask-<COLOR>.svg)](https://shields.io/)
 
 ### 📃 Introduction
 
@@ -33,26 +35,67 @@ This is a sequence-to-sequence model with an attention mechanism. The encoder is
     <img src="model_picture/model.png"/>
 </p>
 
-### 🌲 Request Packages
-
-[![Generic badge](https://img.shields.io/badge/gdown-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/keras-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/numpy-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/scipy-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/tqdm-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/jieba-<COLOR>.svg)](https://shields.io/)
-
-### 🚧 Utilization
+### ⚓️ Utilization
 
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
 bash ./download_sources.sh
 ```
-2. Run the following command, and you should see the outputs.
+2. Then, run:
 ```
 python3 model_process.py
 ```
-
+3. After that, send the message to http://10.0.0.207:5000/ in the following format:
+```json
+{"message":"kuso和夏哥撞车了, 2333333333, 哈哈哈哈哈哈, 哈哈哈哈哈哈哈哈哈哈哈"}
+```
+The python program should respond:
+```
+{
+    "result": "not enough input messages"
+}
+```
+However, if you send enough inputs, the program will return the generated messages:
+```json
+{
+    "result": [
+        "哈哈哈哈哈\n",
+        "傻气溢出屏幕\n",
+        "666666666\n",
+        "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈\n",
+        "傻紫说的好...\n",
+        "原声是poyyy吧（笑）\n",
+        "awsl\n",
+        "草\n",
+        "哈哈哈哈哈哈哈\n",
+        "前方高能\n",
+        "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈\n",
+        "我好傻啊\n",
+        "哈哈哈哈哈哈哈\n",
+        "23333333333333",
+        "88888888888888",
+        "草\n",
+        "????????????\n",
+        "要来了\n",
+        "欧尼酱贴贴\n",
+        "好真实...\n",
+        "过于沙雕\n",
+        "awsl\n",
+        "好厉害的bgm23333333",
+        "kksk\n",
+        "好糟糕的样子啊\n",
+        "傻气溢出屏幕\n",
+        "awsl\n",
+        "awsl\n",
+        "666666666\n",
+        "23333333333333",
+        "草\n",
+        "awsl\n",
+        "好会hero2333\n",
+        "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈\n"
+    ]
+}
+```
 ### 🎉 Output example
 
 With inputs:
