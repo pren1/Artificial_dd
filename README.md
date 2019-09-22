@@ -50,7 +50,7 @@ python3 model_process.py
 {"message":"kuso和夏哥撞车了, 2333333333, 哈哈哈哈哈哈, 哈哈哈哈哈哈哈哈哈哈哈"}
 ```
 The python program should respond:
-```
+```json
 {
     "result": "not enough input messages"
 }
