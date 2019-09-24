@@ -19,6 +19,9 @@ import pdb
 import _thread
 import tensorflow as tf
 from multiprocessing.pool import ThreadPool
+import json
+import copy
+import threading
 
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
@@ -28,7 +31,12 @@ class model_process(object):
 		self.BATCH_SIZE = BATCH_SIZE
 		self.PREDICT_LEN = 15
 		self.model_folder = 'tmp'
+		# Multi-thread version
 		self.data_list = []
+		self.totalAdded = 0
+		self.lock = threading.Lock()
+
+		self.pool = ThreadPool(processes=4)
 
 	def prepare_for_generator(self):
 		'prepare for the whole process'
@@ -57,49 +65,61 @@ class model_process(object):
 		assert len(data_seq) > 0, "Empty data, something wrong here~"
 		print(f">> {data_seq}")
 		generated = []
-		if self.is_data_enough():
+		# Save the obtained_input at this list
+		obtained_input = sum(copy.deepcopy(self.data_list), [])
+		if len(obtained_input) > self.context_vector_length:
 			'Print input data'
 			# print("read in data:")
 			# for data in self.data_list:
 			# 	print(f">>{data}")
 			'Run prediction automatically'
-			obtained_input = sum(self.data_list, [])
+			# obtained_input = sum(self.data_list, [])
 			assert len(obtained_input) > self.context_vector_length, "Logic error"
-			print("create a new thread to generate text...")
-			pool = ThreadPool(processes=1)
-			async_result = pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
+			threading.Thread(target=self.DeleteDataList).start()
+			print(f"create a new thread to generate text, has obtained {len(obtained_input)} inputs")
+			async_result = self.pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]), self.graph, self.sess))
 			# _thread.start_new_thread(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]),self.graph, self.sess))
 			# generated = self.generator.predict_interface(self.preparer.transform(obtained_input[-100:])).tolist()
 			'Empty the data_list'
-			self.data_list = []
+			# self.data_list = []
 			return_val = async_result.get()
 			return return_val
 		'Cut the string and add tokens'
 		data_seq = self.preparer.cut_target_seq(data_seq)
-		self.data_list.append(data_seq)
+		# self.data_list.append(data_seq)
+		threading.Thread(target=self.AddToDataList, args=(data_seq,)).start()
 		return generated
 
-	def is_data_enough(self):
-		current_length = len(sum(self.data_list, []))
-		if current_length > self.context_vector_length:
-			return True
-		else:
-			return False
+	def AddToDataList(self, meg):
+		self.lock.acquire()
+		self.data_list.append(meg)
+		self.totalAdded += 1
+		self.lock.release()
+		print("debugLog: totalAdded: {}, datalist length: {}".format(self.totalAdded, len(self.data_list)))
+
+	def DeleteDataList(self):
+		self.lock.acquire()
+		del self.data_list[:]
+		self.lock.release()
+		print("debugLog: datalist deleted. datalist length: {}".format(len(self.data_list)))
 
 # if __name__ == '__main__':
 # 	'Initialize'
 # 	mp = model_process(BATCH_SIZE = 100)
 # 	'Create a generator, load in the trained model'
 # 	mp.prepare_for_generator()
+# 	with open('msg.json') as f:
+# 		data = json.load(f)
+# 	# pdb.set_trace()
 # 	'We assume we have the following inputs'
-# 	data = input_data().return_example_input_list()
-# 	input_data().show_input_data()
+# 	# data = input_data().return_example_input_list()
+# 	# input_data().show_input_data()
 # 	'Use a loop to iterate the data'
 # 	for single_data in data:
 # 		'Everytime there is a new message available, feed in the data'
 # 		returned_result = mp.feed_in_data(single_data)
-# 		if len(returned_result) > 0:
-# 			pdb.set_trace()
+# 		# if len(returned_result) > 0:
+# 		# 	pdb.set_trace()
 
 if __name__ == '__main__':
 	from flask import Flask
