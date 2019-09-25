@@ -32,7 +32,7 @@ class process_prepare(object):
 				f.write("%s\n" % item)
 
 	def cut_target_seq(self, target_data):
-		# jieba.load_userdict("./custom_dict.txt")
+		jieba.load_userdict("./custom_dict.txt")
 		word_list = jieba.lcut(target_data)
 		'after we cut this part, apply a filter'
 		res = []
