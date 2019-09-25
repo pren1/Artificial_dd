@@ -7,6 +7,8 @@ from tqdm import tqdm
 import copy
 import random
 import jieba
+jieba.set_dictionary("./dict.txt")
+jieba.initialize()
 
 class process_prepare(object):
 	def __init__(self, target_path_folder):
@@ -32,7 +34,7 @@ class process_prepare(object):
 				f.write("%s\n" % item)
 
 	def cut_target_seq(self, target_data):
-		jieba.load_userdict("./custom_dict.txt")
+		# jieba.load_userdict("./custom_dict.txt")
 		word_list = jieba.lcut(target_data)
 		'after we cut this part, apply a filter'
 		res = []
