@@ -66,6 +66,7 @@ python3 model_process.py
     "233": "湊-阿库娅Official",
     "258": "未来明-MiraiAkari",
     "266": "夏色祭Official",
+    "283": "茯苓猫不黑",
     "286": "神楽Mea_Official",
     "309": "犬山玉姬Official",
     "322": "泠鸢yousa"
