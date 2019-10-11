@@ -139,14 +139,14 @@ if __name__ == '__main__':
 	room_id_mapping = './content/room_id_mapping.json'
 	with open(room_id_mapping, encoding='UTF-8') as json_file:
 		id_mapping_dict = json.load(json_file, encoding='UTF-8')
-	print(f"mapping_id_res: {id_mapping_dict}")
-
+	for single in id_mapping_dict:
+		print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
 	from flask import Flask
 	from flask import jsonify
 	from flask import request
 	from flask import copy_current_request_context
 	'Initialize'
-	mp = model_process(BATCH_SIZE = 500)
+	mp = model_process(BATCH_SIZE = 100)
 	'Create a generator, load in the trained model'
 	mp.prepare_for_generator()
 	app = Flask(__name__)

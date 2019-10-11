@@ -23,8 +23,8 @@ class text_generator(object):
 
 	def predict_interface(self, seed, room_id_label, graph, sess):
 		self.start_time = time.time()
-		self.predict(seed, room_id_label, graph, sess)
-		# self.predict_beam_search(seed, room_id_label, graph, sess)
+		# self.predict(seed, room_id_label, graph, sess)
+		self.predict_beam_search(seed, room_id_label, graph, sess)
 		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 		return generated
@@ -163,7 +163,6 @@ class text_generator(object):
 			# self.print_target_message(generated)
 			# _thread.start_new_thread(self.print_target_message, (generated,))
 			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
-		pdb.set_trace()
 		return fin_res.tolist()
 
 	def danmaku_filter(self, fin_res):
