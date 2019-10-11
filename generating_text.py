@@ -24,23 +24,23 @@ class text_generator(object):
 	def predict_interface(self, seed, room_id_label, graph, sess):
 		self.start_time = time.time()
 		self.predict(seed, room_id_label, graph, sess)
-		# self.predict_beam_search(seed, graph, sess)
+		# self.predict_beam_search(seed, room_id_label, graph, sess)
 		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 		return generated
 
-	def predict_beam_search(self, seed, graph, sess, top_k=5, temperature=1.0):
-		print("deprecated")
-		pdb.set_trace()
+	def predict_beam_search(self, seed, room_id_label, graph, sess, top_k=5, temperature=1.0):
 		# self.encoder_model.reset_states()
 		# self.decoder_model.reset_states()
 		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
+		label_seed = np.repeat(np.expand_dims(room_id_label, 0), self.BATCH_SIZE, axis=0)
+
 		with graph.as_default():
 			with sess.as_default():
-				state_and_output = self.encoder_model.predict(seed)
+				state_and_output = self.encoder_model.predict((seed, label_seed))
 		states_value = state_and_output[:4]
 		encoder_output = state_and_output[-1]
-		self.predictions = [np.array([[7010]] * self.BATCH_SIZE, dtype=np.int32)]
+		self.predictions = [np.array([[8408]] * self.BATCH_SIZE, dtype=np.int32)]
 		self.predictions_prob = []
 		'If the stop batch value is True, skip that part'
 		self.stop_batch_list = [False] * self.BATCH_SIZE
@@ -59,7 +59,7 @@ class text_generator(object):
 			for batch_index in range(len(next_probits)):
 				if self.stop_batch_list[batch_index] == True:
 					'Simply stop calculating the useless probability'
-					last_token = 7010
+					last_token = 8408
 				else:
 					if top_k == 1:
 						last_token = next_probits[batch_index].argmax(axis=-1)
@@ -75,7 +75,7 @@ class text_generator(object):
 						# probs = probs / np.sum(probs)
 						probs = softmax(probs)
 						last_token = np.random.choice(indices, p=probs)
-					if last_token in [0, 7010]:
+					if last_token in [8407, 8408]:
 						self.stop_batch_list[batch_index] = True
 				current_whole_batch_prediction.append(last_token)
 				current_whole_batch_prob.append(next_probits[batch_index][last_token])
