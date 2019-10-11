@@ -52,23 +52,23 @@ python3 model_process.py
 3. After that, you should figure out your room id. Here are some frequently used examples. Note that not all the vtubers are tested, so use this model at your own risk.
 ```json
 {
-    '1': '猫宫日向Official',
-    '16': '新科娘Official',
-    '38': '大神澪Official',
-    '54', AIChannel官方,
-    '70': '白上吹雪Official',
-    '96': '紫咲诗音Official',
-    '133': '輝夜月Official',
-    '146': '神子杏-Official',
-    '152': '兔纱mimi_Official',
-    '191': '神楽七奈Official',
-    '224': '陆婉莹GodRiku',
-    '233': '湊-阿库娅Official',
-    '258': '未来明-MiraiAkari'
-    '266': '夏色祭Official',
-    '286', 神楽Mea_Official,
-    '309': '犬山玉姬Official',
-    '322': '泠鸢yousa'
+    "1": "猫宫日向Official",
+    "16": "新科娘Official",
+    "38": "大神澪Official",
+    "54", "AIChannel官方",
+    "70": "白上吹雪Official",
+    "96": "紫咲诗音Official",
+    "133": "輝夜月Official",
+    "146": "神子杏-Official",
+    "152": "兔纱mimi_Official",
+    "191": "神楽七奈Official",
+    "224": "陆婉莹GodRiku",
+    "233": "湊-阿库娅Official",
+    "258": "未来明-MiraiAkari",
+    "266": "夏色祭Official",
+    "286", "神楽Mea_Official",
+    "309": "犬山玉姬Official",
+    "322": "泠鸢yousa"
 }
 ```
 Take a look at the room_id_mapping.json under the content folder for other vtubers.
