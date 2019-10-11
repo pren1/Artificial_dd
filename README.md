@@ -73,6 +73,7 @@ python3 model_process.py
 }
 ```
 Take a look at the room_id_mapping.json under the content folder for other vtubers.
+
 4. After that, post a message to http://10.0.0.207:5000/ in the following format. You should also specify the room_id this time, and it will boost the performance:
 ```json
 {
