@@ -136,6 +136,11 @@ class model_process(object):
 # 		# 	pdb.set_trace()
 
 if __name__ == '__main__':
+	room_id_mapping = './content/room_id_mapping.json'
+	with open(room_id_mapping, encoding='UTF-8') as json_file:
+		id_mapping_dict = json.load(json_file, encoding='UTF-8')
+	print(f"mapping_id_res: {id_mapping_dict}")
+
 	from flask import Flask
 	from flask import jsonify
 	from flask import request
@@ -150,8 +155,8 @@ if __name__ == '__main__':
 	def processjson():
 		data = request.get_json()
 		# pdb.set_trace()
-		generated_message = mp.feed_in_data(data['message'], room_id_label=70)
-		print(f"read in data message: {data['message']}")
+		generated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
+		print(f"read in data message: {data['message']}, with room_id: {data['room_id']} from {id_mapping_dict[str(data['room_id'])]}")
 		if len(generated_message) == 0:
 			return jsonify({'result': "not enough input messages"})
 		else:
