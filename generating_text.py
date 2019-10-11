@@ -17,7 +17,7 @@ class text_generator(object):
 		self.PREDICT_LEN = PREDICT_LEN
 		self.preparer = preparer
 		'will only consider the messages that has more log prob than -2.0'
-		self.prob_thres = -2.5
+		self.prob_thres = -3.5
 		self.generate_message_number = 40
 		# self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
 
@@ -144,26 +144,27 @@ class text_generator(object):
 			if len(generated) > 0 and generated != '\n':
 				generated_whole_list.append([this_batch_prob, generated])
 		res = sorted(generated_whole_list, key=lambda tup: tup[0], reverse=True)
-		for this_batch_prob, generated in res:
-			print("with prob: {}, generated: {}".format(this_batch_prob, generated))
-		pdb.set_trace()
+		# for this_batch_prob, generated in res:
+		# 	print("with prob: {}, generated: {}".format(this_batch_prob, generated))
+		# pdb.set_trace()
 		res = np.asarray(res)
 		# pdb.set_trace()
 		prob_part = softmax([float(x) for x in res[:, 0]])
 		danmaku_list = res[:, 1]
-		# fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
+		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
 		# fin_res = self.danmaku_filter(fin_res)
 		# time_range = list(range(len(fin_res)))
 		# s = sched.scheduler(time.time, time.sleep)
 		# for (time_stamp, single_meg) in zip(time_range, fin_res):
 		# 	print(f"time_stamp: {time_stamp}, meg: {single_meg}")
 		# 	s.enter(float(time_stamp), 1, self.print_target_message, (single_meg,))
-		for generated in danmaku_list:
-			# print(f"Generated message: {generated}")
+		for generated in fin_res:
+			print(f"{generated}")
 			# self.print_target_message(generated)
 			# _thread.start_new_thread(self.print_target_message, (generated,))
-			print("with prob: {}, generated: {}".format(this_batch_prob, generated))
-		return danmaku_list
+			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
+		pdb.set_trace()
+		return fin_res.tolist()
 
 	def danmaku_filter(self, fin_res):
 		new_res = []
