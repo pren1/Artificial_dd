@@ -55,7 +55,7 @@ python3 model_process.py
     "1": "猫宫日向Official",
     "16": "新科娘Official",
     "38": "大神澪Official",
-    "54", "AIChannel官方",
+    "54": "AIChannel官方",
     "70": "白上吹雪Official",
     "96": "紫咲诗音Official",
     "133": "輝夜月Official",
@@ -66,7 +66,7 @@ python3 model_process.py
     "233": "湊-阿库娅Official",
     "258": "未来明-MiraiAkari",
     "266": "夏色祭Official",
-    "286", "神楽Mea_Official",
+    "286": "神楽Mea_Official",
     "309": "犬山玉姬Official",
     "322": "泠鸢yousa"
 }
