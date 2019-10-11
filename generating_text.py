@@ -21,16 +21,17 @@ class text_generator(object):
 		self.generate_message_number = 40
 		# self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
 
-	def predict_interface(self, seed, graph, sess):
+	def predict_interface(self, seed, room_id_label, graph, sess):
 		self.start_time = time.time()
-		self.predict(seed, graph, sess)
+		self.predict(seed, room_id_label, graph, sess)
 		# self.predict_beam_search(seed, graph, sess)
 		generated = self.generate_text()
 		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 		return generated
 
 	def predict_beam_search(self, seed, graph, sess, top_k=5, temperature=1.0):
-
+		print("deprecated")
+		pdb.set_trace()
 		# self.encoder_model.reset_states()
 		# self.decoder_model.reset_states()
 		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
@@ -82,17 +83,18 @@ class text_generator(object):
 			self.predictions_prob.append(np.asarray(current_whole_batch_prob))
 			states_value = [h, c, h1, c1]  #######NOTICE THE ADDITIONAL HIDDEN STATES
 
-	def predict(self, seed, graph, sess):
+	def predict(self, seed, room_id_label, graph, sess):
 		'given the input seed, process it'
 		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
+		label_seed = np.repeat(np.expand_dims(room_id_label, 0), self.BATCH_SIZE, axis=0)
 		# Encode the input as state vectors.
 		with graph.as_default():
 			with sess.as_default():
-				state_and_output = self.encoder_model.predict(seed)
+				state_and_output = self.encoder_model.predict((seed, label_seed))
 		states_value = state_and_output[:4]
 		encoder_output = state_and_output[-1]
 		# Solve decoder things
-		self.predictions = [np.array([[7010]] * self.BATCH_SIZE, dtype=np.int32)]
+		self.predictions = [np.array([[8408]] * self.BATCH_SIZE, dtype=np.int32)]
 		self.predictions_prob = []
 		for i in range(self.PREDICT_LEN):
 			last_word = self.predictions[-1]
@@ -137,27 +139,31 @@ class text_generator(object):
 			'we also wanna the average prob here'
 			this_batch_prob /= len(current_list)
 			current_list.remove('eos')
-			if len(current_list) > 0 and this_batch_prob > self.prob_thres:
-				generated = ''.join(current_list)  # Convert back to text
+			generated = ''.join(current_list)  # Convert back to text
+			# if len(current_list) > 0 and this_batch_prob > self.prob_thres:
+			if len(generated) > 0 and generated != '\n':
 				generated_whole_list.append([this_batch_prob, generated])
 		res = sorted(generated_whole_list, key=lambda tup: tup[0], reverse=True)
+		for this_batch_prob, generated in res:
+			print("with prob: {}, generated: {}".format(this_batch_prob, generated))
+		pdb.set_trace()
 		res = np.asarray(res)
 		# pdb.set_trace()
 		prob_part = softmax([float(x) for x in res[:, 0]])
 		danmaku_list = res[:, 1]
-		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
-		fin_res = self.danmaku_filter(fin_res)
+		# fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
+		# fin_res = self.danmaku_filter(fin_res)
 		# time_range = list(range(len(fin_res)))
 		# s = sched.scheduler(time.time, time.sleep)
 		# for (time_stamp, single_meg) in zip(time_range, fin_res):
 		# 	print(f"time_stamp: {time_stamp}, meg: {single_meg}")
 		# 	s.enter(float(time_stamp), 1, self.print_target_message, (single_meg,))
-		for generated in fin_res:
-			print(f"Generated message: {generated}")
+		for generated in danmaku_list:
+			# print(f"Generated message: {generated}")
 			# self.print_target_message(generated)
 			# _thread.start_new_thread(self.print_target_message, (generated,))
-			# print("with prob: {}, generated: {}".format(this_batch_prob, generated))
-		return fin_res
+			print("with prob: {}, generated: {}".format(this_batch_prob, generated))
+		return danmaku_list
 
 	def danmaku_filter(self, fin_res):
 		new_res = []

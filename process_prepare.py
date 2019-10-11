@@ -17,8 +17,8 @@ class process_prepare(object):
 			self.characters = pickle.load(f)
 			'also add end part, and beginning part'
 			self.characters[-1] = 'eos'
-			self.characters[0] = '\n'
-		self.preprocessed_TXT = './{}/new_filtered_data.json'.format(target_path_folder)
+			self.characters[-2] = '\n'
+		self.preprocessed_TXT = './{}/pure_live_512.json'.format(target_path_folder)
 		self.embedding_matrix = np.load('./{}/glove-512.npy'.format(target_path_folder))
 
 		'define transfer things'
@@ -41,29 +41,34 @@ class process_prepare(object):
 		for single_word in word_list:
 			if single_word in self.characters:
 				res.append(single_word)
+		# pdb.set_trace()
+		'this part should be uncommented'
 		res.insert(0, 'eos')
 		res.append('\n')
 		return res
 
 	def load_in_texts(self):
-		'get some real text inputs'
 		with open(self.preprocessed_TXT, encoding='UTF-8') as json_file:
 			data = json.load(json_file, encoding='UTF-8')
-			pdb.set_trace()
 			'process the data'
 			txt = []
-			for single_meg in data:
-				single_meg.insert(0, 'eos')
-				single_meg.append('\n')
-				txt.extend(single_meg)
+			label_part = []
+			for single_meg in tqdm(data):
+				single_meg[0].insert(0, 'eos')
+				single_meg[0].append('\n')
+				label = [single_meg[1]] * len(single_meg[0])
+				txt.extend(single_meg[0])
+				label_part.extend(label)
+
 			'remove that does not belongs to characters...'
 			new_txt = []
-			for sing in tqdm(txt):
-				sing = sing.lower()
-				if sing != '鸨儿':
-					new_txt.append(sing)
+			new_label_part = []
+			for (single, label) in tqdm(zip(txt, label_part)):
+				if single not in ['口呆口', 'magnet']:
+					new_txt.append(single)
+					new_label_part.append(label)
 			print("updated txt, remove from {} to {}, examples: {}".format(len(txt), len(new_txt), new_txt[:20]))
-			return new_txt
+			return new_txt, new_label_part
 
 	def delete_EOS(self, input: list) -> list:
 		while 'eos' in input:
@@ -75,9 +80,12 @@ class process_prepare(object):
 			print(single)
 		return res
 
-	def clip_text(self, txt_length, new_txt):
-		'a good way to show the input text'
-		start_index = random.randint(0, len(new_txt) - txt_length)
+	def clip_text(self, txt_length, new_txt, new_label, start_pos_type=0):
+		proposed_start_index = new_label.index(start_pos_type)
+		'Currently, we only support 355 vtubers'
+		proposed_end_index = new_label.index(min(start_pos_type + 1, 355))
+		start_index = random.randint(proposed_start_index, proposed_end_index - txt_length)
 		clipped_txt_for_test = new_txt[start_index:start_index + txt_length]
+		clipped_labels_for_test = new_label[start_index:start_index + txt_length]
 		self.delete_EOS(copy.deepcopy(clipped_txt_for_test))
-		return clipped_txt_for_test
+		return clipped_txt_for_test, clipped_labels_for_test[0]
