@@ -43,7 +43,7 @@ This is a sequence-to-sequence model with the attention mechanism. The encoder i
 
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
-bash ./download_sources.sh
+uwsgi --http :8001 --enable-threads --wsgi-file ./model_process.py --callable app
 ```
 2. Then, run:
 ```
@@ -74,7 +74,7 @@ python3 model_process.py
 ```
 Take a look at the room_id_mapping.json under the content folder for other vtubers.
 
-4. After that, post a message to http://127.0.0.1:5000/ in the following format. You should also specify the room_id this time, and it will boost the performance:
+4. After that, post a message to http://127.0.0.1:8001/ in the following format. You should also specify the room_id this time, and it will boost the performance:
 ```json
 {
     "message":"kuso和夏哥撞车了, 2333333333, 哈哈哈哈哈哈, 哈哈哈哈哈哈哈哈哈哈哈", 
