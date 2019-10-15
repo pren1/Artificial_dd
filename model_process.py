@@ -153,7 +153,7 @@ app = Flask(__name__)
 @app.route('/', methods=['POST'])
 def processjson():
 	data = request.get_json()
-	enerated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
+	generated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
 	
 	if len(generated_message) == 0:
 		return jsonify({'result': "not enough input messages"})
