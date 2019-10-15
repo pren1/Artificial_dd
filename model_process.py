@@ -22,6 +22,10 @@ from multiprocessing.pool import ThreadPool
 import json
 import copy
 import threading
+from flask import Flask
+from flask import jsonify
+from flask import request
+from flask import copy_current_request_context
 
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
@@ -135,30 +139,48 @@ class model_process(object):
 # 		# if len(returned_result) > 0:
 # 		# 	pdb.set_trace()
 
+room_id_mapping = './content/room_id_mapping.json'
+with open(room_id_mapping, encoding='UTF-8') as json_file:
+	id_mapping_dict = json.load(json_file, encoding='UTF-8')
+
+for single in id_mapping_dict:
+	print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
+
+mp = model_process(BATCH_SIZE = 100)
+mp.prepare_for_generator()
+app = Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def processjson():
+	data = request.get_json()
+	enerated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
+	
+	if len(generated_message) == 0:
+		return jsonify({'result': "not enough input messages"})
+	else:
+		return jsonify({'result': generated_message})
+	
 if __name__ == '__main__':
-	room_id_mapping = './content/room_id_mapping.json'
-	with open(room_id_mapping, encoding='UTF-8') as json_file:
-		id_mapping_dict = json.load(json_file, encoding='UTF-8')
-	for single in id_mapping_dict:
-		print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
-	from flask import Flask
-	from flask import jsonify
-	from flask import request
-	from flask import copy_current_request_context
-	'Initialize'
-	mp = model_process(BATCH_SIZE = 100)
-	'Create a generator, load in the trained model'
-	mp.prepare_for_generator()
-	app = Flask(__name__)
-	'do not know why...'
-	@app.route('/', methods=['POST'])
-	def processjson():
-		data = request.get_json()
-		# pdb.set_trace()
-		generated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
-		print(f"read in data message: {data['message']}, with room_id: {data['room_id']} from {id_mapping_dict[str(data['room_id'])]}")
-		if len(generated_message) == 0:
-			return jsonify({'result': "not enough input messages"})
-		else:
-			return jsonify({'result': generated_message})
+# 	room_id_mapping = './content/room_id_mapping.json'
+# 	with open(room_id_mapping, encoding='UTF-8') as json_file:
+# 		id_mapping_dict = json.load(json_file, encoding='UTF-8')
+# 	for single in id_mapping_dict:
+# 		print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
+	
+# 	'Initialize'
+# 	mp = model_process(BATCH_SIZE = 100)
+# 	'Create a generator, load in the trained model'
+# 	mp.prepare_for_generator()
+# 	app = Flask(__name__)
+# 	'do not know why...'
+# 	@app.route('/', methods=['POST'])
+# 	def processjson():
+# 		data = request.get_json()
+# 		# pdb.set_trace()
+# 		generated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
+# 		print(f"read in data message: {data['message']}, with room_id: {data['room_id']} from {id_mapping_dict[str(data['room_id'])]}")
+# 		if len(generated_message) == 0:
+# 			return jsonify({'result': "not enough input messages"})
+# 		else:
+# 			return jsonify({'result': generated_message})
 	app.run(host='127.0.0.1')
