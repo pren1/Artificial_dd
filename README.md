@@ -43,11 +43,11 @@ This is a sequence-to-sequence model with the attention mechanism. The encoder i
 
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
-uwsgi --http :8001 --enable-threads --wsgi-file ./model_process.py --callable app
+bash ./download_sources.sh
 ```
 2. Then, run:
 ```
-python3 model_process.py
+uwsgi --http :8001 --enable-threads --wsgi-file ./model_process.py --callable app
 ```
 3. After that, you should figure out your room id. Here are some frequently used examples. Note that not all the vtubers are tested, so use this model at your own risk.
 ```json
