@@ -13,14 +13,14 @@ Please keep this repo **private**, and please notice that this is **not** an ope
 
 ### 🌲 Request Packages
 
-[![Generic badge](https://img.shields.io/badge/gdown-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/keras-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/numpy-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/scipy-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/tqdm-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/jieba-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/flask-<COLOR>.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/uwsgi-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/gdown-orange.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/keras-red.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/numpy-blue.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/scipy-blueviolet.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/tqdm-lightgrey.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/jieba-ff69b4.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/flask-success.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/uwsgi-yellow.svg)](https://shields.io/)
 ### 📃 Introduction
 
 A software that can send context-based fake danmaku. 
