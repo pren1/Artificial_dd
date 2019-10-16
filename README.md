@@ -21,6 +21,7 @@ Please keep this repo **private**, and please notice that this is **not** an ope
 [![Generic badge](https://img.shields.io/badge/jieba-ff69b4.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/flask-success.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/uwsgi-yellow.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/pandas-grey.svg)](https://shields.io/)
 ### 📃 Introduction
 
 A software that can send context-based fake danmaku. 
