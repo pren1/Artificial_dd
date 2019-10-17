@@ -51,8 +51,10 @@ bash ./download_sources.sh
 ```
 2. Then, run:
 ```
-uwsgi --http :8001 --enable-threads --wsgi-file ./model_process.py --callable app
+uwsgi --http :80 --enable-thrds --wsgi-file ./model_process.py --callable app --pyargv "--batch_size=100"
 ```
+Notice that you can always tune the batch_size when you start this service. If you get larger batch_size, then the model performance will increase, but the program would be more time-consuming. So, there is a trade-off here. Please select this parameter based on your machine. Generally, if you have a GPU, set the batch_size to 500 is recommended.
+
 3. After that, you should figure out your room id. Here are some frequently used examples. Note that not all the vtubers are tested, so use this model at your own risk.
 ```json
 {
@@ -78,13 +80,25 @@ uwsgi --http :8001 --enable-threads --wsgi-file ./model_process.py --callable ap
 ```
 Take a look at the room_id_mapping.json under the content folder for other vtubers.
 
-4. After that, post a message to Server_ip:8001 in the following format. You should also specify the room_id this time, and it will boost the performance:
-```json
-{
-    "message":"kuso和夏哥撞车了, 2333333333, 哈哈哈哈哈哈, 哈哈哈哈哈哈哈哈哈哈哈", 
-    "room_id": 266
-}
+4. After that, post the following url. You should also specify the room_id this time, and it will boost the performance:
 ```
+http://YOUR_IP:PORT/processjson?
+message="迷迭迷迭, 迷迭迷迭帕里桑, 23333333, 哈哈哈哈哈哈哈"
+&room_id=286
+&use_beam_search=True
+&temperature=1.0
+&message_number=40
+```
+Please feel free to tune the following parameters for better performance:
+
+parameter name | data type | default value | Description |
+--- | --- | --- | --- 
+message | string | --- | input danmaku message |
+room_id | int | --- | the room id of the vtubers |
+use_beam_search | bool | False | apply this should boost the performance, but it will also slow the inference process |
+temperature | float | 1.0 | Increase this value above 1.0 will increase the diversity of the generated text and mistakes. In contrast, decrease this value will make the model more confident and more conservative. |
+message_number | int | 40 | The total message numbers generated each time |
+
 The python program should respond:
 ```json
 {
@@ -95,46 +109,46 @@ However, if you send enough inputs, the program will return the generated messag
 ```json
 {
     "result": [
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "上手上手\n",
-        "夏哥赶紧上舰（自闭）\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
+        "tekoki出来血压拉满\n",
+        "迷迭帕里帕里\n",
+        "迷迭迷迭paryi桑\n",
+        "tekoki迷迭迷迭paryi桑\n",
+        "草，迷迭迷迭\n",
+        "tekoki血压up，秋梨膏，请大大留下留下你们的关注",
+        "迷迭迷迭paryi迷迭迷迭桑\n",
+        "血压升高拉满\n",
+        "tekoki迷迭\n",
+        "tekoki血压\n",
+        "tekoki迷迭迷迭paryi桑\n",
+        "血压升高拉满\n",
+        "tekoki迷迭迷迭paryi桑\n",
+        "迷迭迷迭爬犁桑（tekoki）\n",
+        "血压拉满\n",
+        "迷迭迷迭paryi桑\n",
+        "tekoki迷迭血压\n",
+        "草\n",
+        "迷迭迷迭爬犁桑（tekoki）\n",
+        "迷迭迷迭爬犁桑，血压上升（）血压爆炸\n",
+        "草\n",
+        "迷迭迷迭paryi桑\n",
+        "迷迭迷迭帕里桑  \n",
+        "tekoki出道吧\n",
+        "迷迭迷迭paryi桑\n",
+        "迷迭迷迭paryi桑\n",
+        "迷迭迷迭paryi桑\n",
+        "迷迭迷迭paryi桑\n",
         "草\n",
         "草\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "似曾相识\n",
+        "迷迭迷迭\n",
+        "tekoki出来血压拉满\n",
+        "草，这段\n",
+        "迷迭迷迭\n",
+        "tekoki迷迭\n",
         "草\n",
-        "草\n",
-        "23333\n",
-        "我同意哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "左边说马自立想吃舰长是个屑\n",
-        "唉，我要看转播的梗\n",
-        "夏哥，fbk吃番茄！\n",
-        "马自立是我老婆！\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "草\n",
-        "夏哥吃！(哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "草\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "草\n",
-        "我全都要\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "草\n",
-        "草\n",
-        "草\n",
-        "草\n",
-        "草\n",
-        "草\n",
-        "草\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "草\n",
-        "草\n",
-        "斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯哈斯",
-        "舰长上舰！！！！\n",
-        "说的好 你别地形啊（意味深）\n",
-        "草\n",
-        "全是老父亲啊\n",
-        "我以为是哪迫害马自立 哈哈\n"
+        "tekoki血压拉满\n",
+        "迷迭迷迭帕里桑  \n",
+        "血压爆炸\n",
+        "血压拉满\n"
     ]
 }
 ```
