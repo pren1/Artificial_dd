@@ -15,7 +15,7 @@ Please keep this repo **private**, and please notice that this is **not** an ope
 
 [![Generic badge](https://img.shields.io/badge/gdown-orange.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/keras-red.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/numpy-blue.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/tensorflow-blue.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/scipy-blueviolet.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/tqdm-lightgrey.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/jieba-ff69b4.svg)](https://shields.io/)
