@@ -18,18 +18,22 @@ class text_generator(object):
 		self.preparer = preparer
 		'will only consider the messages that has more log prob than -2.0'
 		self.prob_thres = -3.5
-		self.generate_message_number = 40
+		# self.generate_message_number = 40
 		# self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
 
-	def predict_interface(self, seed, room_id_label, graph, sess):
+	def predict_interface(self, seed, room_id_label, graph, sess, use_beam_search, temperature, generate_message_number):
 		self.start_time = time.time()
-		# self.predict(seed, room_id_label, graph, sess)
-		self.predict_beam_search(seed, room_id_label, graph, sess)
-		generated = self.generate_text()
+		if not use_beam_search:
+			print("Beam search off")
+			self.predict(seed, room_id_label, graph, sess)
+		else:
+			print("Beam search on")
+			self.predict_beam_search(seed, room_id_label, graph, sess, temperature)
+		generated = self.generate_text(generate_message_number)
 		print("---generation process cost %s seconds ---" % (time.time() - self.start_time))
 		return generated
 
-	def predict_beam_search(self, seed, room_id_label, graph, sess, top_k=5, temperature=1.0):
+	def predict_beam_search(self, seed, room_id_label, graph, sess, temperature, top_k=5):
 		# self.encoder_model.reset_states()
 		# self.decoder_model.reset_states()
 		seed = np.repeat(np.expand_dims(seed, 0), self.BATCH_SIZE, axis=0)
@@ -69,11 +73,15 @@ class text_generator(object):
 						probs = nlargest(top_k, probs)
 						indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
 						'apply softmax here...'
-						# probs = np.array(probs) / temperature
-						# probs = probs - np.max(probs)
-						# probs = np.exp(probs)
-						# probs = probs / np.sum(probs)
-						probs = softmax(probs)
+
+						# start_time = time.time()
+						# probs = self.softmax(probs)
+						probs = np.array(probs) / temperature
+						'This part is used to avoid Nan, I think'
+						probs = probs - np.max(probs)
+						probs = np.exp(probs)
+						probs = probs / np.sum(probs)
+						# print("---generation process cost %s seconds ---" % (time.time() - start_time))
 						last_token = np.random.choice(indices, p=probs)
 					if last_token in [8407, 8408]:
 						self.stop_batch_list[batch_index] = True
@@ -116,7 +124,7 @@ class text_generator(object):
 			# Update states
 			states_value = [h, c, h1, c1]  #######NOTICE THE ADDITIONAL HIDDEN STATES
 
-	def generate_text(self):
+	def generate_text(self, generate_message_number):
 		generated_whole_list = []
 		for i in range(self.BATCH_SIZE):
 			# print('PREDICTION %d\n\n' % i)
@@ -151,7 +159,7 @@ class text_generator(object):
 		# pdb.set_trace()
 		prob_part = softmax([float(x) for x in res[:, 0]])
 		danmaku_list = res[:, 1]
-		fin_res = np.random.choice(danmaku_list, self.generate_message_number, p=prob_part)
+		fin_res = np.random.choice(danmaku_list, generate_message_number, p=prob_part)
 		# fin_res = self.danmaku_filter(fin_res)
 		# time_range = list(range(len(fin_res)))
 		# s = sched.scheduler(time.time, time.sleep)

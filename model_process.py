@@ -26,6 +26,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import copy_current_request_context
+import argparse, sys
 
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
@@ -68,7 +69,7 @@ class model_process(object):
 
 		self.generator = text_generator(encoder_model, decoder_model, self.BATCH_SIZE, self.PREDICT_LEN, self.preparer)
 
-	def feed_in_data(self, data_seq, room_id_label):
+	def feed_in_data(self, data_seq, room_id_label, use_beam_search, temperature, generate_message_number):
 		'read in the data'
 		assert len(data_seq) > 0, "Empty data, something wrong here~"
 		print(f">> {data_seq}")
@@ -88,7 +89,7 @@ class model_process(object):
 				# self.new_thread_lock.acquire()
 				'We do not allow anyone run a new thread at here'
 				self.run_a_new_thread = False
-				async_result = self.pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]), room_id_label, self.graph, self.sess))
+				async_result = self.pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]), room_id_label, self.graph, self.sess, use_beam_search, temperature, generate_message_number))
 				return_val = async_result.get()
 				self.run_a_new_thread = True
 				# self.new_thread_lock.release()
@@ -114,30 +115,10 @@ class model_process(object):
 		self.lock.release()
 		print("debugLog: datalist deleted. datalist length: {}".format(len(self.data_list)))
 
-# if __name__ == '__main__':
-# 	room_id_mapping = './content/room_id_mapping.json'
-# 	with open(room_id_mapping, encoding='UTF-8') as json_file:
-# 		id_mapping_dict = json.load(json_file, encoding='UTF-8')
-# 	print(f"mapping_id_res: {id_mapping_dict}")
-# 	'Initialize'
-# 	mp = model_process(BATCH_SIZE = 100)
-# 	'Create a generator, load in the trained model'
-# 	mp.prepare_for_generator()
-# 	new_txt, new_label = mp.preparer.load_in_texts()
-# 	# with open('msg.json') as f:
-# 	# 	data = json.load(f)
-# 	# pdb.set_trace()
-# 	'We assume we have the following inputs'
-# 	# data = input_data().return_example_input_list()
-# 	# input_data().show_input_data()
-# 	'Use a loop to iterate the data'
-# 	input_text, input_label = mp.preparer.clip_text(700, new_txt, new_label, start_pos_type=152)
-# 	pdb.set_trace()
-# 	for single_data in input_text:
-# 		'Everytime there is a new message available, feed in the data'
-# 		returned_result = mp.feed_in_data(single_data, room_id_label=input_label)
-# 		# if len(returned_result) > 0:
-# 		# 	pdb.set_trace()
+
+parser=argparse.ArgumentParser()
+parser.add_argument('--batch_size', help='batch size of the model')
+args=parser.parse_args()
 
 room_id_mapping = './content/room_id_mapping.json'
 with open(room_id_mapping, encoding='UTF-8') as json_file:
@@ -146,14 +127,35 @@ with open(room_id_mapping, encoding='UTF-8') as json_file:
 for single in id_mapping_dict:
 	print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
 
-mp = model_process(BATCH_SIZE = 100)
+if args.batch_size:
+	batch_size = int(args.batch_size)
+else:
+	batch_size = 100
+
+print(f"Batch size: {batch_size}")
+mp = model_process(BATCH_SIZE = batch_size)
 mp.prepare_for_generator()
 app = Flask(__name__)
 
-@app.route('/', methods=['POST'])
+@app.route('/processjson', methods=['POST'])
 def processjson():
-	data = request.get_json()
-	generated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
+	message = request.args.get('message')
+	room_id = request.args.get('room_id')
+	use_beam_search_str = request.args.get('use_beam_search')
+	use_beam_search = use_beam_search_str in ['True', 'true']
+
+	temperature_str = request.args.get('temperature') or "1.0"
+	temperature = float(temperature_str)
+
+	generate_message_number_str = request.args.get('message_number') or "40"
+	generate_message_number = int(generate_message_number_str)
+
+	# if not use_beam_search:
+	# 	print("use_beam_search: None")
+	# else:
+	# 	print(f"use_beam_search: {use_beam_search}")
+
+	generated_message = mp.feed_in_data(message, room_id_label=room_id, use_beam_search=use_beam_search, temperature=temperature, generate_message_number=generate_message_number)
 	
 	if len(generated_message) == 0:
 		return jsonify({'result': "not enough input messages"})
@@ -161,26 +163,4 @@ def processjson():
 		return jsonify({'result': generated_message})
 	
 if __name__ == '__main__':
-# 	room_id_mapping = './content/room_id_mapping.json'
-# 	with open(room_id_mapping, encoding='UTF-8') as json_file:
-# 		id_mapping_dict = json.load(json_file, encoding='UTF-8')
-# 	for single in id_mapping_dict:
-# 		print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
-	
-# 	'Initialize'
-# 	mp = model_process(BATCH_SIZE = 100)
-# 	'Create a generator, load in the trained model'
-# 	mp.prepare_for_generator()
-# 	app = Flask(__name__)
-# 	'do not know why...'
-# 	@app.route('/', methods=['POST'])
-# 	def processjson():
-# 		data = request.get_json()
-# 		# pdb.set_trace()
-# 		generated_message = mp.feed_in_data(data['message'], room_id_label=data['room_id'])
-# 		print(f"read in data message: {data['message']}, with room_id: {data['room_id']} from {id_mapping_dict[str(data['room_id'])]}")
-# 		if len(generated_message) == 0:
-# 			return jsonify({'result': "not enough input messages"})
-# 		else:
-# 			return jsonify({'result': generated_message})
 	app.run(host='0.0.0.0')
