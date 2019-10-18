@@ -27,6 +27,7 @@ from flask import jsonify
 from flask import request
 from flask import copy_current_request_context
 import argparse, sys
+from flask_cors import *
 
 class model_process(object):
 	def __init__(self, BATCH_SIZE):
@@ -136,6 +137,7 @@ print(f"Batch size: {batch_size}")
 mp = model_process(BATCH_SIZE = batch_size)
 mp.prepare_for_generator()
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 
 @app.route('/processjson', methods=['POST'])
 def processjson():
