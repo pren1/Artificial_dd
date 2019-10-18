@@ -24,6 +24,7 @@ Please keep this repo **private**, and please notice that this is **not** an ope
 [![Generic badge](https://img.shields.io/badge/pandas-grey.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/pydot-cyan.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/graphviz-brown.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/flask-cors-black.svg)](https://shields.io/)
 
 ### 📃 Introduction
 
