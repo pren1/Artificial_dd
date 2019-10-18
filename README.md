@@ -96,7 +96,7 @@ parameter name | data type | default value | Description |
 message | string | --- | input danmaku message |
 room_id | int | --- | the room id of the vtubers |
 use_beam_search | bool | False | apply this should boost the performance, but it will also slow the inference process |
-temperature | float | 1.0 | Increase this value above 1.0 will increase the diversity of the generated text and mistakes. In contrast, decrease this value will make the model more confident and more conservative. |
+temperature | float | 1.0 | **This only works when you use the beam search.** Increase this value above 1.0 will increase the diversity of the generated text and mistakes. In contrast, decrease this value will make the model more confident and more conservative. |
 message_number | int | 40 | The total message numbers generated each time |
 
 The python program should respond:
