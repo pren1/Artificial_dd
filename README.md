@@ -56,36 +56,11 @@ uwsgi --http :80 --enable-threads --wsgi-file ./model_process.py --callable app 
 ```
 Notice that you can always tune the batch_size when you start this service. If you get larger batch_size, then the model performance will increase, but the program would be more time-consuming. So, there is a trade-off here. Please select this parameter based on your machine. Generally, if you have a GPU, set the batch_size to 500 is recommended.
 
-3. After that, you should figure out your room id. Here are some frequently used examples. Note that not all the vtubers are tested, so use this model at your own risk.
-```json
-{
-    "1": "猫宫日向Official",
-    "16": "新科娘Official",
-    "38": "大神澪Official",
-    "54": "AIChannel官方",
-    "70": "白上吹雪Official",
-    "96": "紫咲诗音Official",
-    "133": "輝夜月Official",
-    "146": "神子杏-Official",
-    "152": "兔纱mimi_Official",
-    "191": "神楽七奈Official",
-    "224": "陆婉莹GodRiku",
-    "233": "湊-阿库娅Official",
-    "258": "未来明-MiraiAkari",
-    "266": "夏色祭Official",
-    "283": "茯苓猫不黑",
-    "286": "神楽Mea_Official",
-    "309": "犬山玉姬Official",
-    "322": "泠鸢yousa"
-}
-```
-Take a look at the room_id_mapping.json under the content folder for other vtubers.
-
-4. After that, post the following url. You should also specify the room_id this time, and it will boost the performance:
+3. After that, you should figure out your room id and post the following url. You should also specify the room_id this time, since it could boost the performance:
 ```
 http://YOUR_IP:PORT/processjson?
 message="迷迭迷迭, 迷迭迷迭帕里桑, 23333333, 哈哈哈哈哈哈哈"
-&room_id=286
+&room_id=12235923
 &use_beam_search=True
 &temperature=1.0
 &message_number=40
