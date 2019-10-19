@@ -74,6 +74,9 @@ class model_process(object):
 		'read in the data'
 		assert len(data_seq) > 0, "Empty data, something wrong here~"
 		print(f">> {data_seq}")
+		'Cut the string and add tokens'
+		data_seq = self.preparer.cut_target_seq(data_seq)
+		threading.Thread(target=self.AddToDataList, args=(data_seq,)).start()
 		# Save the obtained_input at this list
 		obtained_input = sum(copy.deepcopy(self.data_list), [])
 		if len(obtained_input) >= self.context_vector_length:
@@ -86,22 +89,16 @@ class model_process(object):
 			assert len(obtained_input) >= self.context_vector_length, "Logic error"
 			threading.Thread(target=self.DeleteDataList).start()
 			print(f"create a new thread to generate text, has obtained {len(obtained_input)} inputs")
-			if True:
-				# self.new_thread_lock.acquire()
-				'We do not allow anyone run a new thread at here'
-				self.run_a_new_thread = False
-				async_result = self.pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]), room_id_label, self.graph, self.sess, use_beam_search, temperature, generate_message_number))
-				return_val = async_result.get()
-				self.run_a_new_thread = True
-				# self.new_thread_lock.release()
-				return return_val
-			else:
-				return []
-		'Cut the string and add tokens'
-		data_seq = self.preparer.cut_target_seq(data_seq)
-		# self.data_list.append(data_seq)
-		threading.Thread(target=self.AddToDataList, args=(data_seq,)).start()
-		return []
+			# self.new_thread_lock.acquire()
+			'We do not allow anyone run a new thread at here'
+			self.run_a_new_thread = False
+			async_result = self.pool.apply_async(self.generator.predict_interface, (self.preparer.transform(obtained_input[-100:]), room_id_label, self.graph, self.sess, use_beam_search, temperature, generate_message_number))
+			return_val = async_result.get()
+			self.run_a_new_thread = True
+			# self.new_thread_lock.release()
+			return return_val, 0
+		else:
+			return [], self.context_vector_length - len(obtained_input)
 
 	def AddToDataList(self, meg):
 		self.lock.acquire()
@@ -142,7 +139,13 @@ CORS(app, supports_credentials=True)
 @app.route('/processjson', methods=['POST'])
 def processjson():
 	message = request.args.get('message')
-	room_id = request.args.get('room_id')
+	obtained_room_id = request.args.get('room_id')
+	if obtained_room_id not in id_mapping_dict:
+		return jsonify({'code': -1, 'message': "room id not exist",
+			'result': []})
+
+	room_id = id_mapping_dict[obtained_room_id]
+	print(f"Get room ID : {room_id}")
 	use_beam_search_str = request.args.get('use_beam_search')
 	use_beam_search = use_beam_search_str in ['True', 'true']
 
@@ -157,12 +160,15 @@ def processjson():
 	# else:
 	# 	print(f"use_beam_search: {use_beam_search}")
 
-	generated_message = mp.feed_in_data(message, room_id_label=room_id, use_beam_search=use_beam_search, temperature=temperature, generate_message_number=generate_message_number)
+	generated_message, remain_slots = mp.feed_in_data(message, room_id_label=room_id, use_beam_search=use_beam_search, temperature=temperature, generate_message_number=generate_message_number)
 	
 	if len(generated_message) == 0:
-		return jsonify({'result': "not enough input messages"})
+		return jsonify({'code': 1, 'message': f"not enough input messages, please send {remain_slots} more tokens",
+			'result': []})
 	else:
-		return jsonify({'result': generated_message})
+		return jsonify({
+			'code': 0, 'message': "return generated messages",
+			'result': generated_message})
 	
 if __name__ == '__main__':
 	app.run(host='0.0.0.0')
