@@ -18,6 +18,7 @@ class text_generator(object):
 		self.preparer = preparer
 		'will only consider the messages that has more log prob than -2.0'
 		self.prob_thres = -3.5
+		self.dict_size = 10817
 		# self.generate_message_number = 40
 		# self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
 
@@ -44,7 +45,7 @@ class text_generator(object):
 				state_and_output = self.encoder_model.predict((seed, label_seed))
 		states_value = state_and_output[:4]
 		encoder_output = state_and_output[-1]
-		self.predictions = [np.array([[8408]] * self.BATCH_SIZE, dtype=np.int32)]
+		self.predictions = [np.array([[self.dict_size]] * self.BATCH_SIZE, dtype=np.int32)]
 		self.predictions_prob = []
 		'If the stop batch value is True, skip that part'
 		self.stop_batch_list = [False] * self.BATCH_SIZE
@@ -63,7 +64,7 @@ class text_generator(object):
 			for batch_index in range(len(next_probits)):
 				if self.stop_batch_list[batch_index] == True:
 					'Simply stop calculating the useless probability'
-					last_token = 8408
+					last_token = self.dict_size
 				else:
 					if top_k == 1:
 						last_token = next_probits[batch_index].argmax(axis=-1)
@@ -83,7 +84,7 @@ class text_generator(object):
 						probs = probs / np.sum(probs)
 						# print("---generation process cost %s seconds ---" % (time.time() - start_time))
 						last_token = np.random.choice(indices, p=probs)
-					if last_token in [8407, 8408]:
+					if last_token in [self.dict_size-1, self.dict_size]:
 						self.stop_batch_list[batch_index] = True
 				current_whole_batch_prediction.append(last_token)
 				current_whole_batch_prob.append(next_probits[batch_index][last_token])
@@ -102,7 +103,7 @@ class text_generator(object):
 		states_value = state_and_output[:4]
 		encoder_output = state_and_output[-1]
 		# Solve decoder things
-		self.predictions = [np.array([[8408]] * self.BATCH_SIZE, dtype=np.int32)]
+		self.predictions = [np.array([[self.dict_size]] * self.BATCH_SIZE, dtype=np.int32)]
 		self.predictions_prob = []
 		for i in range(self.PREDICT_LEN):
 			last_word = self.predictions[-1]

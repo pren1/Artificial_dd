@@ -11,6 +11,7 @@ class model_structure_loader(object):
 		self.context_vector_length = context_vector_length
 		self.dict_length = len(characters)
 		self.embedding_matrix = embedding_matrix
+		self.dropout_rate = 0.4
 
 	def lstm_model(self, seq_len=30, batch_size=None, stateful=True):
 		"""Language model: Encoder decoder favor for context term"""
@@ -38,7 +39,7 @@ class model_structure_loader(object):
 			rich_info_embedding)
 		state_h_1 = tf.keras.layers.concatenate([forward_h, backward_h])
 		state_c_1 = tf.keras.layers.concatenate([forward_c, backward_c])
-		enc_lstm1 = tf.keras.layers.Dropout(0.6)(enc_lstm1)
+		enc_lstm1 = tf.keras.layers.Dropout(self.dropout_rate)(enc_lstm1)
 		encoder_states_1 = [state_h_1, state_c_1]
 
 		enc_lstm2, forward_h, forward_c, backward_h, backward_c = tf.keras.layers.Bidirectional(
@@ -58,12 +59,12 @@ class model_structure_loader(object):
 		                                    return_sequences=True,
 		                                    kernel_regularizer=tf.keras.regularizers.l2(self.regularizer_coefficient))
 		lstm_1, _, _ = lstm_1_layer(decode_embedding, initial_state=encoder_states_1)
-		dropout_lstm_1 = tf.keras.layers.Dropout(0.6)(lstm_1)
+		dropout_lstm_1 = tf.keras.layers.Dropout(self.dropout_rate)(lstm_1)
 		lstm_2_layer = tf.keras.layers.LSTM(self.EMBEDDING_DIM, name='decoder_lstm_2', stateful=stateful, return_state=True,
 		                                    return_sequences=True,
 		                                    kernel_regularizer=tf.keras.regularizers.l2(self.regularizer_coefficient))
 		lstm_2, _, _ = lstm_2_layer(dropout_lstm_1, initial_state=encoder_states_2)
-		dropout_lstm_2 = tf.keras.layers.Dropout(0.6)(lstm_2)
+		dropout_lstm_2 = tf.keras.layers.Dropout(self.dropout_rate)(lstm_2)
 
 		'try to add attention here~'
 		attention = tf.keras.layers.Dot(axes=[2, 2])([dropout_lstm_2, enc_lstm2])

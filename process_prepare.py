@@ -18,6 +18,7 @@ class process_prepare(object):
 			'also add end part, and beginning part'
 			self.characters[-1] = 'eos'
 			self.characters[-2] = '\n'
+		'pure_live_512 has been deprecated'
 		self.preprocessed_TXT = './{}/pure_live_512.json'.format(target_path_folder)
 		self.embedding_matrix = np.load('./{}/glove-512.npy'.format(target_path_folder))
 
@@ -30,7 +31,8 @@ class process_prepare(object):
 
 	def create_custom_dict(self):
 		with open('custom_dict.txt', 'w',encoding='UTF-8') as f:
-			for item in self.characters[1:]:
+			# for item in self.characters[1:]:
+			for item in self.characters:
 				f.write("%s\n" % item)
 
 	def cut_target_seq(self, target_data):
