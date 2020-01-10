@@ -18,7 +18,7 @@ class text_generator(object):
 		self.preparer = preparer
 		'will only consider the messages that has more log prob than -2.0'
 		self.prob_thres = -3.5
-		self.dict_size = 10817
+		self.dict_size = 7453
 		# self.generate_message_number = 40
 		# self.push_service = pexpect.spawn('node ./bilibili-live-danmaku-api/stdio.js')
 

@@ -11,7 +11,7 @@ class model_structure_loader(object):
 		self.context_vector_length = context_vector_length
 		self.dict_length = len(characters)
 		self.embedding_matrix = embedding_matrix
-		self.dropout_rate = 0.4
+		self.dropout_rate = 0.6
 
 	def lstm_model(self, seq_len=30, batch_size=None, stateful=True):
 		"""Language model: Encoder decoder favor for context term"""

@@ -119,8 +119,8 @@ parser.add_argument('--batch_size', help='batch size of the model')
 args=parser.parse_args()
 
 room_id_mapping = './content/room_id_mapping.json'
-with open(room_id_mapping, encoding='UTF-8') as json_file:
-	id_mapping_dict = json.load(json_file, encoding='UTF-8')
+with open(room_id_mapping) as json_file:
+	id_mapping_dict = json.load(json_file)
 
 for single in id_mapping_dict:
 	print(f"mapping_id_res: {single}, {id_mapping_dict[single]}")
@@ -139,7 +139,7 @@ CORS(app, supports_credentials=True)
 @app.route('/processjson', methods=['POST'])
 def processjson():
 	message = request.args.get('message')
-	obtained_room_id = request.args.get('room_id')
+	obtained_room_id = str(request.args.get('room_id'))
 	if obtained_room_id not in id_mapping_dict:
 		return jsonify({'code': -1, 'message': "room id not exist",
 			'result': []})
