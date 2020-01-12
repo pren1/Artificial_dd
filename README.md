@@ -52,7 +52,7 @@ bash ./download_sources.sh
 ```
 2. Then, run:
 ```
-uwsgi --http :80 --enable-threads --wsgi-file ./model_process.py --callable app --pyargv "--batch_size=100"
+uwsgi --http :8000 --enable-threads --wsgi-file ./model_process.py --callablapp --pyargv "--batch_size=100"
 ```
 Notice that you can always tune the batch_size when you start this service. If you get larger batch_size, then the model performance will increase, but the program would be more time-consuming. So, there is a trade-off here. Please select this parameter based on your machine. Generally, if you have a GPU, set the batch_size to 500 is recommended.
 
@@ -62,7 +62,7 @@ http://YOUR_IP:PORT/processjson?
 message="迷迭迷迭, 迷迭迷迭帕里桑, 23333333, 哈哈哈哈哈哈哈"
 &room_id=12235923
 &use_beam_search=True
-&temperature=1.0
+&temperature=3.5
 &message_number=40
 ```
 Please feel free to tune the following parameters for better performance:
