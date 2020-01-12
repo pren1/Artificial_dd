@@ -45,6 +45,10 @@ This is a sequence-to-sequence model with the attention mechanism. The encoder i
 </p>
 
 ### ⚡️ Quick start
+0. Install required packages.
+```
+bash ./install_request_package.sh
+```
 
 1. Run the following command, and you should see two folders named 'content' and 'tmp'.
 ```
