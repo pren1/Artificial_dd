@@ -148,10 +148,13 @@ class text_generator(object):
 			'we also wanna the average prob here'
 			this_batch_prob /= len(current_list)
 			current_list.remove('eos')
+			current_list[:] = [v for v in current_list if v != '"' and v != '“' and v!= '”']
 			generated = ''.join(current_list)  # Convert back to text
 			# if len(current_list) > 0 and this_batch_prob > self.prob_thres:
 			if len(generated) > 0 and generated != '\n':
 				generated_whole_list.append([this_batch_prob, generated])
+		if len(generated_whole_list) == 0:
+			generated_whole_list = ["内部错误", "请增加输入温度或生成弹幕数", "内部错误", "请增加输入温度或生成弹幕数", "内部错误", "请增加输入温度或生成弹幕数"]
 		res = sorted(generated_whole_list, key=lambda tup: tup[0], reverse=True)
 		# for this_batch_prob, generated in res:
 		# 	print("with prob: {}, generated: {}".format(this_batch_prob, generated))
